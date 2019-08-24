@@ -13,6 +13,7 @@ public class CommandWorker implements Runnable{
     private Map<String, CommandHandler> handlers;
     private LinkedList<String> queue;
     public CommandWorker(Map<String,CommandHandler> handlers ){
+        this.queue = new LinkedList<>();
         this.handlers = handlers;
     }
 

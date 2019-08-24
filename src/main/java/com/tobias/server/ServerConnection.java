@@ -34,6 +34,7 @@ public class ServerConnection implements Runnable {
         new Thread(worker).start();
         while (true) {
             try {
+                write("LOL",CommandType.LOL);
                 if(input.ready()){
                     worker.processCommand(read());
                 }
@@ -44,9 +45,9 @@ public class ServerConnection implements Runnable {
         }
     }
 
-    public void write(String data, int msgId, CommandType type) {
+    public void write(String data, CommandType type) {
         try {
-            output.write("ID:" + msgId + " TYPE:" + type.toString() + " DATA:" + data);
+            output.write("TYPE:" + type.toString() + " DATA:" + data);
 
         } catch (IOException e) {
             System.out.println("GameServer write error: " + e.getMessage());

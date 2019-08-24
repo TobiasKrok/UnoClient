@@ -15,7 +15,7 @@ public class ClientCommandHandler implements CommandHandler {
     @Override
     public void process(Command command) {
     if (command.getType() == CommandType.CLIENT_CONNECT) {
-        connection.write("",1,CommandType.CLIENT_CONNECT);
+        connection.write("",CommandType.CLIENT_CONNECT);
     }
     }
 }
