@@ -20,6 +20,7 @@ public class CommandWorker implements Runnable{
 
     public void run(){
         while (true) {
+
             synchronized (queue) {
                 while (queue.isEmpty()){
                     try {
@@ -46,7 +47,6 @@ public class CommandWorker implements Runnable{
     }
 
     private Command parseCommand(String command) {
-        int id = Character.getNumericValue(command.charAt(3));
         // Set the commandType to an unknown commandType. If we can't convert the passed commandType to a CommandType, WORKER_UNKNOWNCOMMAND will be returned.
         CommandType cmdType = CommandType.WORKER_UNKNOWNCOMMAND;
         String data = "";
@@ -56,7 +56,7 @@ public class CommandWorker implements Runnable{
         } catch (IllegalArgumentException e){
             System.out.println("Could not bind Type: " + (command.substring(command.indexOf("TYPE:") + 5,command.indexOf("DATA:"))) + " to a CommandType");
         }
-        return new Command(id,cmdType,data);
+        return new Command(cmdType,data);
     }
 
     private CommandHandler getHandlerForCommand(Command command){

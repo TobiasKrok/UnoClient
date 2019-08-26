@@ -3,6 +3,7 @@ package com.tobias.server;
 
 import com.tobias.server.command.CommandType;
 import com.tobias.server.command.CommandWorker;
+import com.tobias.server.handlers.ClientCommandHandler;
 import com.tobias.server.handlers.CommandHandler;
 
 import java.io.*;
@@ -17,6 +18,7 @@ public class ServerConnection implements Runnable {
     private Socket socket;
     private CommandWorker worker;
     private Map<String,CommandHandler> handlers;
+    private int clientId;
 
     public ServerConnection(Socket socket) {
         try {
@@ -31,12 +33,20 @@ public class ServerConnection implements Runnable {
     }
 
     public void run() {
+        this.handlers.put("CLIENT",new ClientCommandHandler(this));
         new Thread(worker).start();
         while (true) {
+            System.out.println(clientId);
             try {
-                write("LOL",CommandType.LOL);
                 if(input.ready()){
                     worker.processCommand(read());
+                } else {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        System.out.println("input.ready() thread sleep interrupted: " + e.getMessage());
+                    }
+
                 }
             } catch (IOException e) {
                 System.out.println(e.getMessage());
@@ -44,6 +54,9 @@ public class ServerConnection implements Runnable {
 
         }
     }
+   public void setClientId(int id) {
+        this.clientId = id;
+   }
 
     public void write(String data, CommandType type) {
         try {
