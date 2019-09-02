@@ -20,7 +20,6 @@ public class CommandWorker implements Runnable{
 
     public void run(){
         while (true) {
-
             synchronized (queue) {
                 while (queue.isEmpty()){
                     try {
@@ -32,6 +31,7 @@ public class CommandWorker implements Runnable{
                 }
             }
             Command c = parseCommand(queue.get(0));
+            System.out.println("[NET - RECEIVED]" + c.toString());
             if(!(c.getType() == CommandType.WORKER_UNKNOWNCOMMAND)) {
                 getHandlerForCommand(c).process(c);
             }

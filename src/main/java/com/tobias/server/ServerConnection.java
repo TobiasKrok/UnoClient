@@ -36,7 +36,6 @@ public class ServerConnection implements Runnable {
         this.handlers.put("CLIENT",new ClientCommandHandler(this));
         new Thread(worker).start();
         while (true) {
-            System.out.println(clientId);
             try {
                 if(input.ready()){
                     worker.processCommand(read());
