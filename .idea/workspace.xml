@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="f3f867c8-b92c-4e68-8103-385d6f1c7fe0" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UnoClient.iml" beforeDir="false" afterPath="$PROJECT_DIR$/UnoClient.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/tobias/server/ServerConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/tobias/server/ServerConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/tobias/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/tobias/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/tobias/game/GameManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/tobias/game/GameManager.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/tobias/game/card/Card.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/tobias/game/card/Card.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/tobias/game/card/CardColor.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/tobias/game/card/CardColor.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/tobias/game/card/CardType.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/tobias/game/card/CardType.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/tobias/game/player/Player.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/tobias/game/player/Player.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/tobias/server/ServerConnection.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/tobias/server/ServerConnection.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/tobias/server/command/Command.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/tobias/server/command/Command.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/tobias/server/command/CommandType.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/tobias/server/command/CommandType.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/tobias/server/command/CommandWorker.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/tobias/server/command/CommandWorker.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/tobias/server/handlers/ClientCommandHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/tobias/server/handlers/ClientCommandHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/tobias/server/handlers/CommandHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/tobias/server/handlers/CommandHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/tobias/server/handlers/GameCommandHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/tobias/server/handlers/GameCommandHandler.class" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IgnoredFileRootStore">
+    <option name="generatedRoots">
+      <set>
+        <option value="C:\Users\ntitokr\OneDrive - Norsk Titanium\Git\UnoClient\.idea" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectId" id="1Q07XwW4tc4VQ2zBKd8ggN1zZcx" />
+  <component name="PropertiesComponent">
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="project.structure.last.edited" value="Global Libraries" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="Main" type="Application" factoryName="Application" singleton="false" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.tobias.Main" />
+      <module name="UnoClient" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f3f867c8-b92c-4e68-8103-385d6f1c7fe0" name="Default Changelist" comment="" />
+      <created>1566895702266</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1566895702266</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
