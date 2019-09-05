@@ -8,7 +8,7 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %t %c{1}.%M() - %msg %throwable{short}%n" />
         </Console>
-        <RollingFile name="rollingFile" fileName="${logPath}/${rollingFileName}.log" filePattern="${logPath}/${rollingFileName}_%d{yyyy-MM-dd}.log">
+        <RollingFile name="rollingFile" fileName="${logPath}/${rollingFileName}.log" immediateFlush="false" filePattern="${logPath}/${rollingFileName}_%d{yyyy-MM-dd}.log">
             <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %t %c{1}.%M() - %msg %n%throwable%n" />
             <Policies>
                 <!-- Causes a rollover if the log file is older than the current JVM's start time -->
