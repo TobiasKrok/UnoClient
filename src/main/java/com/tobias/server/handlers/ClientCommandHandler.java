@@ -15,7 +15,9 @@ public class ClientCommandHandler implements CommandHandler {
     @Override
     public void process(Command command) {
     if (command.getType() == CommandType.CLIENT_REGISTERID) {
-        connection.setClientId(Integer.valueOf(command.getData()));
+        connection.setClientId(Integer.parseInt(command.getData()));
+    } else if(command.getType() == CommandType.CLIENT_POLL) {
+        connection.write(new Command(CommandType.CLIENT_POLL,"thank u, next"));
     }
     }
 }

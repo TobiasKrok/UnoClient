@@ -3,6 +3,8 @@ package com.tobias.server.command;
 
 
 import com.tobias.server.handlers.CommandHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -12,6 +14,7 @@ public class CommandWorker implements Runnable{
 
     private Map<String, CommandHandler> handlers;
     private LinkedList<String> queue;
+    private static final Logger LOGGER = LogManager.getLogger(CommandWorker.class.getName());
     public CommandWorker(Map<String,CommandHandler> handlers ){
         this.queue = new LinkedList<>();
         this.handlers = handlers;
@@ -26,12 +29,12 @@ public class CommandWorker implements Runnable{
                         queue.wait();
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        LOGGER.error("Worker interrupted, perhaps we disconnected?",e);
                     }
                 }
             }
             Command c = parseCommand(queue.get(0));
-            System.out.println("[NET - RECEIVED]" + c.toString());
+            LOGGER.debug("Command received from Server: " + c.toString());
             if(!(c.getType() == CommandType.WORKER_UNKNOWNCOMMAND)) {
                 getHandlerForCommand(c).process(c);
             }
@@ -54,7 +57,7 @@ public class CommandWorker implements Runnable{
            cmdType = CommandType.valueOf(command.substring(command.indexOf("TYPE:") + 5,command.indexOf("DATA:") - 1));
            data = command.substring(command.indexOf("DATA:") + 5);
         } catch (IllegalArgumentException e){
-            System.out.println("Could not bind Type: " + (command.substring(command.indexOf("TYPE:") + 5,command.indexOf("DATA:"))) + " to a CommandType");
+            LOGGER.error("Could not bind Type: " + (command.substring(command.indexOf("TYPE:") + 5,command.indexOf("DATA:"))) + " to a CommandType");
         }
         return new Command(cmdType,data);
     }
