@@ -1,11 +1,12 @@
 package com.tobias.server;
 
 
+import com.tobias.game.GameManager;
 import com.tobias.server.command.Command;
-import com.tobias.server.command.CommandType;
 import com.tobias.server.command.CommandWorker;
 import com.tobias.server.handlers.ClientCommandHandler;
 import com.tobias.server.handlers.CommandHandler;
+import com.tobias.server.handlers.GameCommandHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,6 +41,7 @@ public class ServerConnection implements Runnable {
 
     public void run() {
         this.handlers.put("CLIENT",new ClientCommandHandler(this));
+        this.handlers.put("PLAYER",new GameCommandHandler(new GameManager()));
         LOGGER.debug("ServerConnection started");
         this.workerThread = new Thread(this.worker);
         this.workerThread.setName("CommandWorker-"+ workerThread.getId());
@@ -78,13 +80,13 @@ public class ServerConnection implements Runnable {
             LOGGER.debug("Command sent to server: " + command.toString());
         } catch (IOException e) {
            LOGGER.fatal("Write failed to server!",e);
-           close();
         } finally {
             try {
                 output.newLine();
                 output.flush();
             } catch (IOException e) {
-                System.out.println("Output close error: " + e.getMessage());
+                LOGGER.fatal("Connection to server lost, disconnecting..");
+                close();
             }
 
         }
@@ -94,10 +96,10 @@ public class ServerConnection implements Runnable {
         try {
             socket.close();
             workerThread.interrupt();
+            LOGGER.warn("Gracefully disconnected from server..");
             Thread.currentThread().interrupt();
-
         } catch (IOException e) {
-            System.out.println("Input/Output close error: " + e.getMessage());
+           LOGGER.error("Error during disconnecting procedure",e);
         }
     }
 

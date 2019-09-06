@@ -28,7 +28,7 @@ private static Logger LOGGER = LogManager.getLogger(Main.class.getName());
                         serverConnection.close();
                     }
                 }
-            },2, TimeUnit.SECONDS);
+            },4, TimeUnit.SECONDS);
         } catch (IOException e) {
             LOGGER.fatal("Failed to connect to server!",e);
         }
