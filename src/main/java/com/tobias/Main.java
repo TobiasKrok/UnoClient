@@ -15,7 +15,7 @@ public class Main {
 private static Logger LOGGER = LogManager.getLogger(Main.class.getName());
     public static void main(String[] args) {
         try {
-            Socket socket = new Socket("localhost", 5000);
+            Socket socket = new Socket(args[0], Integer.parseInt(args[1]));
             LOGGER.info("Connected to server:" + socket.getRemoteSocketAddress().toString());
             ServerConnection serverConnection = new ServerConnection(socket);
             new Thread(serverConnection).start();

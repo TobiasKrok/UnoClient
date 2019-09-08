@@ -12,12 +12,11 @@ public class ClientCommandHandler implements CommandHandler {
     public ClientCommandHandler(ServerConnection connection) {
         this.connection = connection;
     }
+
     @Override
     public void process(Command command) {
-    if (command.getType() == CommandType.CLIENT_REGISTERID) {
-        connection.setClientId(Integer.parseInt(command.getData()));
-    } else if(command.getType() == CommandType.CLIENT_POLL) {
-        connection.write(new Command(CommandType.CLIENT_POLL,"thank u, next"));
-    }
+        if (command.getType() == CommandType.CLIENT_REGISTERID) {
+            connection.setClientId(Integer.parseInt(command.getData()));
+        }
     }
 }
