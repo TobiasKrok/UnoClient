@@ -23,7 +23,7 @@ private static Logger LOGGER = LogManager.getLogger(Main.class.getName());
             ses.schedule(new Runnable() {
                 @Override
                 public void run() {
-                    if(!serverConnection.isIdReceived()){
+                    if(!serverConnection.idReceived()){
                         LOGGER.fatal("Server did not accept connection, no ID was received. Disconnecting..");
                         serverConnection.close();
                     }

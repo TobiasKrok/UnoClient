@@ -28,20 +28,20 @@ public class ServerConnection implements Runnable {
     private static final Logger LOGGER = LogManager.getLogger(ServerConnection.class.getName());
 
     public ServerConnection(Socket socket) {
+        this.handlers = new HashMap<>();
+        this.worker = new CommandWorker(handlers);
+        this.socket = socket;
         try {
-            this.handlers = new HashMap<>();
-            this.worker = new CommandWorker(handlers);
-            this.socket = socket;
             this.output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (IOException e) {
-            e.printStackTrace();
+           LOGGER.fatal("Error initializing Reader/Writer",e);
         }
     }
 
     public void run() {
         this.handlers.put("CLIENT",new ClientCommandHandler(this));
-        this.handlers.put("PLAYER",new GameCommandHandler(new GameManager()));
+        this.handlers.put("PLAYER",new GameCommandHandler(new GameManager(),this));
         LOGGER.debug("ServerConnection started");
         this.workerThread = new Thread(this.worker);
         this.workerThread.setName("CommandWorker-"+ workerThread.getId());
@@ -55,12 +55,12 @@ public class ServerConnection implements Runnable {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
-                        System.out.println("input.ready() thread sleep interrupted: " + e.getMessage());
+                        LOGGER.error("Interrupted during sleep!",e);
                     }
 
                 }
             } catch (IOException e) {
-                System.out.println(e.getMessage());
+                LOGGER.fatal("Error while waiting for data from server!",e);
             }
 
         }
@@ -70,7 +70,7 @@ public class ServerConnection implements Runnable {
         this.idReceived = true;
    }
 
-   public boolean isIdReceived(){
+   public boolean idReceived(){
         return this.idReceived;
    }
 
