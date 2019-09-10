@@ -1,6 +1,7 @@
 package com.tobias.server;
 
 
+
 import com.tobias.game.GameManager;
 import com.tobias.server.command.Command;
 import com.tobias.server.command.CommandWorker;
@@ -26,11 +27,13 @@ public class ServerConnection implements Runnable {
     private boolean idReceived = false;
     private int clientId;
     private static final Logger LOGGER = LogManager.getLogger(ServerConnection.class.getName());
+    private boolean running;
 
     public ServerConnection(Socket socket) {
         this.handlers = new HashMap<>();
         this.worker = new CommandWorker(handlers);
         this.socket = socket;
+        this.running = false;
         try {
             this.output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -39,15 +42,18 @@ public class ServerConnection implements Runnable {
         }
     }
 
+    public void setGameManager(GameManager manager) {
+        this.handlers.put("PLAYER",new GameCommandHandler(manager,this));
+    }
     public void run() {
         this.handlers.put("CLIENT",new ClientCommandHandler(this));
-        this.handlers.put("PLAYER",new GameCommandHandler(new GameManager(),this));
         LOGGER.debug("ServerConnection started");
         this.workerThread = new Thread(this.worker);
         this.workerThread.setName("CommandWorker-"+ workerThread.getId());
         LOGGER.debug("CommandWorker started");
         workerThread.start();
-        while (true) {
+        this.running = true;
+        while (running) {
             try {
                 if(input.ready()){
                     worker.processCommand(read());
@@ -73,7 +79,9 @@ public class ServerConnection implements Runnable {
    public boolean idReceived(){
         return this.idReceived;
    }
-
+   public boolean isRunning() {
+        return this.running;
+   }
     public void write(Command command) {
         try {
             output.write(command.toString());
@@ -94,6 +102,7 @@ public class ServerConnection implements Runnable {
 
     public void close() {
         try {
+            running = false;
             socket.close();
             workerThread.interrupt();
             LOGGER.warn("Gracefully disconnected from server..");
@@ -112,7 +121,7 @@ public class ServerConnection implements Runnable {
             return input.readLine();
 
         } catch (IOException e) {
-            e.printStackTrace();
+           LOGGER.fatal("Failed to read from server!", e);
         }
         return null;
     }
