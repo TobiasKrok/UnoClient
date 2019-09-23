@@ -43,7 +43,7 @@ public class ServerConnection implements Runnable {
     }
 
     public void setGameManager(GameManager manager) {
-        this.handlers.put("PLAYER",new GameCommandHandler(manager,this));
+        this.handlers.put("GAME",new GameCommandHandler(manager,this));
     }
     public void run() {
         this.handlers.put("CLIENT",new ClientCommandHandler(this));

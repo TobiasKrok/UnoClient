@@ -6,7 +6,6 @@ import com.tobias.game.card.CardColor;
 import com.tobias.game.card.CardType;
 import com.tobias.server.ServerConnection;
 import com.tobias.server.command.Command;
-import com.tobias.server.command.CommandType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +23,16 @@ public class GameCommandHandler implements CommandHandler {
 
     @Override
     public void process(Command command) {
-        if(command.getType() == CommandType.PLAYER_DRAWCARD) {
-            
+        switch (command.getType()) {
+            case GAME_START:
+                gameManager.createNewGame();
+                break;
+
+            case GAME_DRAWCARD:
+                gameManager.addCardToPlayer(parseCards(command.getData()));
+            case GAME_REGISTEROPPONENTPLAYER:
+                System.out.println("lol");
+                break;
         }
     }
 
