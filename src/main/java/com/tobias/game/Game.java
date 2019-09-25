@@ -10,7 +10,11 @@ public class Game {
         this.player = p;
     }
 
-    protected boolean isInProgress() {
+    boolean isInProgress() {
         return inProgress;
+    }
+
+    void start() {
+
     }
 }

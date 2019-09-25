@@ -1,6 +1,7 @@
 package com.tobias.server.handlers;
 
 import com.tobias.game.GameManager;
+import com.tobias.game.Player;
 import com.tobias.game.card.Card;
 import com.tobias.game.card.CardColor;
 import com.tobias.game.card.CardType;
@@ -13,25 +14,27 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class GameCommandHandler implements CommandHandler {
+public class GameCommandHandler extends AbstractCommandHandler {
 
     private GameManager gameManager;
     private ServerConnection serverConnection;
-    public GameCommandHandler(GameManager gameManager, ServerConnection serverConnection) {
-        this.gameManager = gameManager;
+
+    public GameCommandHandler(ServerConnection serverConnection) {
+        this.serverConnection = serverConnection;
     }
 
     @Override
     public void process(Command command) {
         switch (command.getType()) {
             case GAME_START:
+                this.gameManager = new GameManager(new Player(serverConnection.getId()));
                 gameManager.createNewGame();
                 break;
 
             case GAME_DRAWCARD:
                 gameManager.addCardToPlayer(parseCards(command.getData()));
+                break;
             case GAME_REGISTEROPPONENTPLAYER:
-                System.out.println("lol");
                 break;
         }
     }

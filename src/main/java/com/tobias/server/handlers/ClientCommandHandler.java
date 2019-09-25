@@ -5,7 +5,7 @@ import com.tobias.server.ServerConnection;
 import com.tobias.server.command.Command;
 import com.tobias.server.command.CommandType;
 
-public class ClientCommandHandler implements CommandHandler {
+public class ClientCommandHandler extends AbstractCommandHandler {
 
     private ServerConnection connection;
 

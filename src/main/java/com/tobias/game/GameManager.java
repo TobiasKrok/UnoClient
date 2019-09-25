@@ -11,6 +11,7 @@ public class GameManager {
     private Player player;
     private Game game;
 
+
     public GameManager (Player p) {
         this.player = p;
         this.opponentIds = new ArrayList<>();
@@ -23,7 +24,7 @@ public class GameManager {
     }
 
     public void createNewGame() {
-        if(!game.isInProgress()) {
+        if(game == null || !game.isInProgress()) {
             this.game = new Game(player);
         }
     }

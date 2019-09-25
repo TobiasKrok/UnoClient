@@ -1,9 +1,6 @@
 package com.tobias;
 
 
-import com.tobias.game.Game;
-import com.tobias.game.GameManager;
-import com.tobias.game.Player;
 import com.tobias.server.ServerConnection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,13 +16,6 @@ private static Logger LOGGER = LogManager.getLogger(Main.class.getName());
     public static void main(String[] args) {
        ServerConnection serverConnection =  startServerConnection(args[0], Integer.parseInt(args[1]));
        checkForId(serverConnection);
-       if(serverConnection.idReceived()){
-           GameManager gameManager = new GameManager(new Player(serverConnection.getId()));
-           serverConnection.setGameManager(gameManager);
-           while (serverConnection.isRunning()) {
-
-           }
-       }
     }
 
     private static ServerConnection startServerConnection(String ip, int port) {
