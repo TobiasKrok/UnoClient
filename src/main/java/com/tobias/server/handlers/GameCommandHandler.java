@@ -1,6 +1,7 @@
 package com.tobias.server.handlers;
 
 import com.tobias.game.GameManager;
+import com.tobias.game.OpponentPlayer;
 import com.tobias.game.Player;
 import com.tobias.game.card.Card;
 import com.tobias.game.card.CardColor;
@@ -27,11 +28,11 @@ public class GameCommandHandler extends AbstractCommandHandler {
     public void process(Command command) {
         switch (command.getType()) {
             case GAME_START:
-                this.gameManager = new GameManager(new Player(serverConnection.getId()));
+                this.gameManager = new GameManager(new Player(serverConnection.getId()),parseOpponentPlayers(command.getData()));
                 gameManager.createNewGame();
                 break;
 
-            case GAME_DRAWCARD:
+            case GAME_SETCARD:
                 gameManager.addCardToPlayer(parseCards(command.getData()));
                 break;
             case GAME_REGISTEROPPONENTPLAYER:
@@ -39,10 +40,10 @@ public class GameCommandHandler extends AbstractCommandHandler {
         }
     }
 
-    private List<Card> parseCards(String cardStr) {
+    private List<Card> parseCards(String cmdStr) {
         List<Card> cards = new ArrayList<>();
         Pattern p = Pattern.compile("\\[(.*?)\\]");
-        Matcher m = p.matcher(cardStr);
+        Matcher m = p.matcher(cmdStr);
         String[] props;
         while(m.find()) {
             props = m.group(1).split(",");
@@ -50,5 +51,13 @@ public class GameCommandHandler extends AbstractCommandHandler {
             cards.add(card);
         }
         return cards;
+    }
+
+    private List<OpponentPlayer> parseOpponentPlayers(String cmdStr) {
+        List<OpponentPlayer> players = new ArrayList<>();
+        for(String s : cmdStr.split(",")) {
+            players.add(new OpponentPlayer(Integer.parseInt(s)));
+        }
+        return players;
     }
 }

@@ -1,7 +1,8 @@
 package com.tobias.server.command;
 
 public enum CommandType {
-    GAME_DRAWCARD,
+    GAME_SETCARD,
+    GAME_REQUESTCARD,
     GAME_LAYCARD,
     GAME_UNO,
     GAME_DISCONNECT,
