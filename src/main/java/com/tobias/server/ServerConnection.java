@@ -53,7 +53,7 @@ public class ServerConnection implements Runnable {
         while (running) {
             try {
                 if(input.ready()){
-                    worker.processCommand(read());
+                    worker.process(read());
                 } else {
                     try {
                         Thread.sleep(1000);

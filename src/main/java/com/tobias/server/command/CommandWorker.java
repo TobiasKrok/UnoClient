@@ -42,7 +42,7 @@ public class CommandWorker implements Runnable{
         }
     }
 
-    public void processCommand(String command) {
+    public void process(String command) {
         synchronized (queue) {
             queue.add(command);
             queue.notify();

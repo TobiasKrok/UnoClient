@@ -8,29 +8,27 @@ import java.util.List;
 public class Game {
 
     private Player player;
-    private int players;
     private Table table;
     private boolean inProgress;
     private List<OpponentPlayer> opponentPlayers;
 
-    public Game (Player p) {
+    public Game (Player p, List<OpponentPlayer> opponentPlayers) {
         this.player = p;
-        this.opponentPlayers =  new ArrayList<>();
+        this.opponentPlayers =  opponentPlayers;
         this.table = new Table();
     }
 
     boolean isInProgress() {
-        return inProgress;
+        return this.inProgress;
     }
 
-    public Table getTable() {
-        return table;
+    Table getTable() {
+        return this.table;
     }
 
-    void setOpponentPlayers(List<OpponentPlayer> players) {
-        this.opponentPlayers = players;
+    Player getPlayer() {
+        return this.player;
     }
-
     void start() {
 
     }

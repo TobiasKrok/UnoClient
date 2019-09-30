@@ -7,26 +7,17 @@ import java.util.List;
 
 public class GameManager {
 
-    private List<OpponentPlayer> opponentPlayers;
-    private Player player;
     private Game game;
     private Table table;
 
-
-    public GameManager (Player p, List<OpponentPlayer> players) {
-        this.player = p;
-        this.opponentPlayers = players;
-        printlol();
-    }
-    
-    public void createNewGame() {
-        this.game = new Game(player);
+    public void createNewGame(Player player, List<OpponentPlayer> opponentPlayers) {
+        this.game = new Game(player,opponentPlayers);
         this.table = game.getTable();
     }
     public Game getGame() {
         return this.game;
     }
     public void addCardToPlayer(List<Card> cards) {
-        player.addToHand(cards);
+        game.getPlayer().addToHand(cards);
     }
 }

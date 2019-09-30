@@ -28,8 +28,8 @@ public class GameCommandHandler extends AbstractCommandHandler {
     public void process(Command command) {
         switch (command.getType()) {
             case GAME_START:
-                this.gameManager = new GameManager(new Player(serverConnection.getId()),parseOpponentPlayers(command.getData()));
-                gameManager.createNewGame();
+                this.gameManager = new GameManager();
+                gameManager.createNewGame(new Player(serverConnection.getId()),parseOpponentPlayers(command.getData()));
                 break;
 
             case GAME_SETCARD:

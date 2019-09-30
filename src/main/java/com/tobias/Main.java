@@ -41,6 +41,6 @@ private static Logger LOGGER = LogManager.getLogger(Main.class.getName());
                     serverConnection.close();
                 }
             }
-        },4, TimeUnit.SECONDS);
+        },10, TimeUnit.SECONDS);
     }
 }
