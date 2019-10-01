@@ -15,8 +15,10 @@ public class ClientCommandHandler extends AbstractCommandHandler {
 
     @Override
     public void process(Command command) {
-        if (command.getType() == CommandType.CLIENT_REGISTERID) {
-            connection.setClientId(Integer.parseInt(command.getData()));
+        switch (command.getType()) {
+            case CLIENT_REGISTERID:
+                connection.setClientId(Integer.parseInt(command.getData()));
+                break;
         }
     }
 }

@@ -31,7 +31,6 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 this.gameManager = new GameManager();
                 gameManager.createNewGame(new Player(serverConnection.getId()),parseOpponentPlayers(command.getData()));
                 break;
-
             case GAME_SETCARD:
                 gameManager.addCardToPlayer(parseCards(command.getData()));
                 break;
