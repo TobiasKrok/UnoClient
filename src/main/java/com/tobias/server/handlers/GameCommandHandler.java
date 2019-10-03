@@ -10,7 +10,9 @@ import com.tobias.server.ServerConnection;
 import com.tobias.server.command.Command;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,7 +36,12 @@ public class GameCommandHandler extends AbstractCommandHandler {
             case GAME_SETCARD:
                 gameManager.addCardToPlayer(parseCards(command.getData()));
                 break;
-            case GAME_REGISTEROPPONENTPLAYER:
+            case GAME_SETTOPCARD:
+                // We should only receive a single card here. That's why we reference index 0.
+                gameManager.setTopCard(parseCards(command.getData()).get(0));
+                break;
+            case GAME_SETOPPONENTPLAYERCARDCOUNT:
+                System.out.println(parseOpponentPlayerId(command.getData()));
                 break;
         }
     }
@@ -51,10 +58,16 @@ public class GameCommandHandler extends AbstractCommandHandler {
         }
         return cards;
     }
-
+    private Map<Integer,Integer> parseOpponentPlayerId (String cmdStr){
+        Map<Integer,Integer> ids = new HashMap<>();
+        String[] arr = cmdStr.split(":");
+        ids.put(Integer.parseInt(arr[0]),Integer.parseInt(arr[1]));
+        return ids;
+    }
     private List<OpponentPlayer> parseOpponentPlayers(String cmdStr) {
         List<OpponentPlayer> players = new ArrayList<>();
         for(String s : cmdStr.split(",")) {
+            if(!(Integer.parseInt(s) == serverConnection.getId()))
             players.add(new OpponentPlayer(Integer.parseInt(s)));
         }
         return players;

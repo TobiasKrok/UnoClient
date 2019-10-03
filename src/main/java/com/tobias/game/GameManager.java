@@ -20,4 +20,15 @@ public class GameManager {
     public void addCardToPlayer(List<Card> cards) {
         game.getPlayer().addToHand(cards);
     }
+
+    public void setDeckCount(int count) {
+        table.getDeck().setCount(count);
+    }
+    public void setTopCard(Card card) {
+        table.setTopCard(card);
+    }
+    public void setCardsOnTableCount(int count) {
+        table.setCardsLayedCount(count);
+    }
+
 }

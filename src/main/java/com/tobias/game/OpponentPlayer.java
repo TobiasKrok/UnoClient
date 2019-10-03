@@ -3,7 +3,7 @@ package com.tobias.game;
 public class OpponentPlayer {
 
     private int id;
-    private int cardsOnHand;
+    private int cardsOnHandCount;
 
     public OpponentPlayer(int id) {
         this.id = id;
@@ -13,11 +13,11 @@ public class OpponentPlayer {
     }
 
 
-    public int getCardsOnHand() {
-        return cardsOnHand;
+    public int getCardsOnHandCount() {
+        return cardsOnHandCount;
     }
 
-    public void setCardsOnHand(int cardsOnHand) {
-        this.cardsOnHand = cardsOnHand;
+    public void setCardsOnHandCount(int count) {
+        this.cardsOnHandCount = count;
     }
 }

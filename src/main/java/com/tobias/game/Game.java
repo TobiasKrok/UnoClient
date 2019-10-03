@@ -2,7 +2,6 @@ package com.tobias.game;
 
 import com.tobias.game.card.Table;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
@@ -28,6 +27,10 @@ public class Game {
 
     Player getPlayer() {
         return this.player;
+    }
+
+    OpponentPlayer getOpponentPlayerById() {
+        return null;
     }
     void start() {
 

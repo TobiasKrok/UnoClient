@@ -6,7 +6,7 @@ public class Table {
 
     private Deck deck;
     private Card topCard;
-    private int cardsLayed;
+    private int cardsLayedCount;
 
 
     public Table() {
@@ -25,11 +25,11 @@ public class Table {
         this.topCard = topCard;
     }
 
-    public int getCardsLayed() {
-        return cardsLayed;
+    public int getCardsLayedCount() {
+        return cardsLayedCount;
     }
 
-    public void setCardsLayed(int cardsLayed) {
-        this.cardsLayed = cardsLayed;
+    public void setCardsLayedCount(int cardsLayed) {
+        this.cardsLayedCount = cardsLayed;
     }
 }
