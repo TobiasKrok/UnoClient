@@ -4,6 +4,7 @@ import com.tobias.game.card.Card;
 import com.tobias.game.card.Table;
 
 import java.util.List;
+import java.util.Map;
 
 public class GameManager {
 
@@ -30,5 +31,10 @@ public class GameManager {
     public void setCardsOnTableCount(int count) {
         table.setCardsLayedCount(count);
     }
-
+    public void setOpponentPlayerCardCount(Map<Integer,Integer> count) {
+        int oppId =  (Integer) count.keySet().toArray()[0];
+        if(game.getOpponentPlayerById((oppId)) != null) {
+            game.getOpponentPlayerById(oppId).setCardsOnHandCount(count.get(oppId));
+        }
+    }
 }

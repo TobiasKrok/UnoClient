@@ -19,5 +19,6 @@ public class OpponentPlayer {
 
     public void setCardsOnHandCount(int count) {
         this.cardsOnHandCount = count;
+        System.out.println(cardsOnHandCount);
     }
 }

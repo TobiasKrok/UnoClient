@@ -29,7 +29,12 @@ public class Game {
         return this.player;
     }
 
-    OpponentPlayer getOpponentPlayerById() {
+    OpponentPlayer getOpponentPlayerById(int id) {
+        for(OpponentPlayer player : opponentPlayers) {
+            if (player.getId() == id) {
+                return player;
+            }
+        }
         return null;
     }
     void start() {
