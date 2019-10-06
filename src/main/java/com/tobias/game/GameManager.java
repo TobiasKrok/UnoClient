@@ -22,19 +22,28 @@ public class GameManager {
         game.getPlayer().addToHand(cards);
     }
 
+
     public void setDeckCount(int count) {
         table.getDeck().setCount(count);
     }
+
     public void setTopCard(Card card) {
         table.setTopCard(card);
     }
+
     public void setCardsOnTableCount(int count) {
         table.setCardsLayedCount(count);
     }
+
     public void setOpponentPlayerCardCount(Map<Integer,Integer> count) {
-        int oppId =  (Integer) count.keySet().toArray()[0];
+        int oppId = (Integer) count.keySet().toArray()[0];
         if(game.getOpponentPlayerById((oppId)) != null) {
             game.getOpponentPlayerById(oppId).setCardsOnHandCount(count.get(oppId));
         }
     }
+
+    public void setNextTurn(int id) {
+
+    }
+
 }

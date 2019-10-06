@@ -43,6 +43,9 @@ public class GameCommandHandler extends AbstractCommandHandler {
             case GAME_SETOPPONENTPLAYERCARDCOUNT:
                 gameManager.setOpponentPlayerCardCount(parseOpponentPlayerId(command.getData()));
                 break;
+            case GAME_SETNEXTTURN:
+                gameManager.setNextTurn(Integer.parseInt(command.getData()));
+                break;
         }
     }
 
