@@ -11,15 +11,17 @@ public class GameManager {
     private Game game;
     private Table table;
 
-    public void createNewGame(Player player, List<OpponentPlayer> opponentPlayers) {
-        this.game = new Game(player,opponentPlayers);
+    public void createNewGame(ClientPlayer clientPlayer, List<OpponentPlayer> opponentPlayers) {
+        this.game = new Game(clientPlayer, opponentPlayers);
         this.table = game.getTable();
     }
+
     public Game getGame() {
         return this.game;
     }
+
     public void addCardToPlayer(List<Card> cards) {
-        game.getPlayer().addToHand(cards);
+        game.getClientPlayer().addToHand(cards);
     }
 
 
@@ -35,15 +37,24 @@ public class GameManager {
         table.setCardsLayedCount(count);
     }
 
-    public void setOpponentPlayerCardCount(Map<Integer,Integer> count) {
+    public void setOpponentPlayerCardCount(Map<Integer, Integer> count) {
         int oppId = (Integer) count.keySet().toArray()[0];
-        if(game.getOpponentPlayerById((oppId)) != null) {
+        if (game.getOpponentPlayerById((oppId)) != null) {
             game.getOpponentPlayerById(oppId).setCardsOnHandCount(count.get(oppId));
         }
     }
 
     public void setNextTurn(int id) {
+        if (id == game.getClientPlayer().getId()) {
+            game.setCurrentPlayerTurn(game.getClientPlayer());
+        } else {
+            game.setCurrentPlayerTurn(game.getOpponentPlayerById(id));
+        }
+    }
 
+    public void disconnectPlayer(int id) {
+        // TODO disconnect ClientPlayer
+        game.getOpponentPlayers().remove(game.getOpponentPlayerById(id));
     }
 
 }

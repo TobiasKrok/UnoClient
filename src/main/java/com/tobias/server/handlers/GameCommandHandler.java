@@ -1,8 +1,8 @@
 package com.tobias.server.handlers;
 
+import com.tobias.game.ClientPlayer;
 import com.tobias.game.GameManager;
 import com.tobias.game.OpponentPlayer;
-import com.tobias.game.Player;
 import com.tobias.game.card.Card;
 import com.tobias.game.card.CardColor;
 import com.tobias.game.card.CardType;
@@ -31,7 +31,7 @@ public class GameCommandHandler extends AbstractCommandHandler {
         switch (command.getType()) {
             case GAME_START:
                 this.gameManager = new GameManager();
-                gameManager.createNewGame(new Player(serverConnection.getId()),parseOpponentPlayers(command.getData()));
+                gameManager.createNewGame(new ClientPlayer(serverConnection.getId()), parseOpponentPlayers(command.getData()));
                 break;
             case GAME_SETCARD:
                 gameManager.addCardToPlayer(parseCards(command.getData()));
@@ -46,6 +46,12 @@ public class GameCommandHandler extends AbstractCommandHandler {
             case GAME_SETNEXTTURN:
                 gameManager.setNextTurn(Integer.parseInt(command.getData()));
                 break;
+            case GAME_SETDECKCOUNT:
+                gameManager.setDeckCount(Integer.parseInt(command.getData()));
+                break;
+            case GAME_PLAYERDISCONNECT:
+                gameManager.disconnectPlayer(Integer.parseInt(command.getData()));
+                break;
         }
     }
 
@@ -54,24 +60,26 @@ public class GameCommandHandler extends AbstractCommandHandler {
         Pattern p = Pattern.compile("\\[(.*?)\\]");
         Matcher m = p.matcher(cmdStr);
         String[] props;
-        while(m.find()) {
+        while (m.find()) {
             props = m.group(1).split(",");
-            Card card = new Card(CardType.valueOf(props[0]), CardColor.valueOf(props[1]),Integer.parseInt(props[2]));
+            Card card = new Card(CardType.valueOf(props[0]), CardColor.valueOf(props[1]), Integer.parseInt(props[2]));
             cards.add(card);
         }
         return cards;
     }
-    private Map<Integer,Integer> parseOpponentPlayerId (String cmdStr){
-        Map<Integer,Integer> ids = new HashMap<>();
+
+    private Map<Integer, Integer> parseOpponentPlayerId(String cmdStr) {
+        Map<Integer, Integer> ids = new HashMap<>();
         String[] arr = cmdStr.split(":");
-        ids.put(Integer.parseInt(arr[0]),Integer.parseInt(arr[1]));
+        ids.put(Integer.parseInt(arr[0]), Integer.parseInt(arr[1]));
         return ids;
     }
+
     private List<OpponentPlayer> parseOpponentPlayers(String cmdStr) {
         List<OpponentPlayer> players = new ArrayList<>();
-        for(String s : cmdStr.split(",")) {
-            if(!(Integer.parseInt(s) == serverConnection.getId()))
-            players.add(new OpponentPlayer(Integer.parseInt(s)));
+        for (String s : cmdStr.split(",")) {
+            if (!(Integer.parseInt(s) == serverConnection.getId()))
+                players.add(new OpponentPlayer(Integer.parseInt(s)));
         }
         return players;
     }
