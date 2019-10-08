@@ -79,6 +79,7 @@ public class ServerConnection implements Runnable {
    public boolean isRunning() {
         return this.running;
    }
+
     public void write(Command command) {
         try {
             output.write(command.toString());

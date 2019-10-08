@@ -38,7 +38,8 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 break;
             case GAME_SETTOPCARD:
                 // We should only receive a single card here. That's why we reference index 0.
-                gameManager.setTopCard(parseCards(command.getData()).get(0));
+                if(!(command.getData().equals("")))
+                    gameManager.setTopCard(parseCards(command.getData()).get(0));
                 break;
             case GAME_SETOPPONENTPLAYERCARDCOUNT:
                 gameManager.setOpponentPlayerCardCount(parseOpponentPlayerId(command.getData()));
