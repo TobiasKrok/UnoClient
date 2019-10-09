@@ -1,5 +1,6 @@
 package com.tobias.game;
 
+import com.tobias.game.card.Card;
 import com.tobias.game.card.Table;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public class Game {
     private Player currentPlayerTurn;
 
 
-    public Game(ClientPlayer p, List<OpponentPlayer> opponentPlayers) {
+    Game(ClientPlayer p, List<OpponentPlayer> opponentPlayers) {
         this.clientPlayer = p;
         this.opponentPlayers = opponentPlayers;
         this.table = new Table();
@@ -46,7 +47,18 @@ public class Game {
         return opponentPlayers;
     }
 
-    public void setCurrentPlayerTurn(Player player) {
+    void setCurrentPlayerTurn(Player player) {
         this.currentPlayerTurn = player;
+    }
+
+    public int getDeckCount() {
+        return table.getDeck().getCount();
+    }
+    public Card getTopCard() {
+        return table.getTopCard();
+    }
+
+    public List<Card> getClientPlayerHand() {
+        return clientPlayer.getHand();
     }
 }

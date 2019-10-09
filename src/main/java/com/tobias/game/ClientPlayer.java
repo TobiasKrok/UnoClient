@@ -14,7 +14,11 @@ public class ClientPlayer extends Player {
         this.hand = new ArrayList<>();
     }
 
-    public void addToHand(List<Card> cards) {
+    void addToHand(List<Card> cards) {
         this.hand.addAll(cards);
     }
+    public List<Card> getHand() {
+        return hand;
+    }
+
 }

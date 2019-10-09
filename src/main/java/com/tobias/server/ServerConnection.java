@@ -1,6 +1,7 @@
 package com.tobias.server;
 
 
+import com.tobias.Main;
 import com.tobias.server.command.Command;
 import com.tobias.server.command.CommandWorker;
 import com.tobias.server.handlers.AbstractCommandHandler;
@@ -122,5 +123,9 @@ public class ServerConnection implements Runnable {
            LOGGER.fatal("Failed to read from server!", e);
         }
         return null;
+    }
+
+    public Map<String, AbstractCommandHandler> getHandlers() {
+        return handlers;
     }
 }

@@ -1,5 +1,6 @@
 package com.tobias.server.handlers;
 
+import com.tobias.Main;
 import com.tobias.game.ClientPlayer;
 import com.tobias.game.GameManager;
 import com.tobias.game.OpponentPlayer;
@@ -8,6 +9,7 @@ import com.tobias.game.card.CardColor;
 import com.tobias.game.card.CardType;
 import com.tobias.server.ServerConnection;
 import com.tobias.server.command.Command;
+import com.tobias.server.command.CommandType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,8 +40,10 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 break;
             case GAME_SETTOPCARD:
                 // We should only receive a single card here. That's why we reference index 0.
-                if(!(command.getData().equals("")))
+                if(!(command.getData().equals(""))) {
                     gameManager.setTopCard(parseCards(command.getData()).get(0));
+                    Main.getUnoController().setTopCard(parseCards(command.getData()).get(0));
+                }
                 break;
             case GAME_SETOPPONENTPLAYERCARDCOUNT:
                 gameManager.setOpponentPlayerCardCount(parseOpponentPlayerId(command.getData()));
@@ -49,9 +53,13 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 break;
             case GAME_SETDECKCOUNT:
                 gameManager.setDeckCount(Integer.parseInt(command.getData()));
+                Main.getUnoController().setDeckCount(Integer.parseInt(command.getData()));
                 break;
             case GAME_PLAYERDISCONNECT:
                 gameManager.disconnectPlayer(Integer.parseInt(command.getData()));
+                break;
+            case GAME_REQUESTCARD:
+                serverConnection.write(new Command(CommandType.GAME_REQUESTCARD,command.getData()));
                 break;
         }
     }

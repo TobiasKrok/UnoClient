@@ -12,7 +12,7 @@ public class CommandWorker implements Runnable{
 
 
     private Map<String, AbstractCommandHandler> handlers;
-    private LinkedList<String> queue;
+    private LinkedList<Command> queue;
     private static final Logger LOGGER = LogManager.getLogger(CommandWorker.class.getName());
 
     public CommandWorker(Map<String, AbstractCommandHandler> handlers ){
@@ -33,7 +33,7 @@ public class CommandWorker implements Runnable{
                     }
                 }
             }
-            Command c = parseCommand(queue.get(0));
+            Command c = queue.get(0);
             LOGGER.debug("Command received from Server: " + c.toString());
             if(!(c.getType() == CommandType.WORKER_UNKNOWNCOMMAND)) {
                 getHandlerForCommand(c).process(c);
@@ -43,6 +43,12 @@ public class CommandWorker implements Runnable{
     }
 
     public void process(String command) {
+        synchronized (queue) {
+            queue.add(parseCommand(command));
+            queue.notify();
+        }
+    }
+    public void process(Command command) {
         synchronized (queue) {
             queue.add(command);
             queue.notify();

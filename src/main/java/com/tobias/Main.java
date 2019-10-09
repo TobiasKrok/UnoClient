@@ -1,21 +1,46 @@
 package com.tobias;
 
 
+import com.tobias.gui.UnoController;
 import com.tobias.server.ServerConnection;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class Main {
+public class Main extends Application {
 private static Logger LOGGER = LogManager.getLogger(Main.class.getName());
+private static UnoController unoController;
+
     public static void main(String[] args) {
-       ServerConnection serverConnection =  startServerConnection(args[0], Integer.parseInt(args[1]));
-       checkForId(serverConnection);
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+       List<String> params = getParameters().getRaw();
+        ServerConnection serverConnection =  startServerConnection(params.get(0), Integer.parseInt(params.get(1)));
+        checkForId(serverConnection);
+        if(serverConnection != null) {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("/ClientGui.fxml"));
+            Parent root = fxmlLoader.load();
+            stage.setScene(new Scene(root,400,500));
+            stage.setTitle("Uno ALPHA");
+            unoController = fxmlLoader.getController();
+            unoController.newWorker(serverConnection.getHandlers());
+            stage.show();
+        }
     }
 
     private static ServerConnection startServerConnection(String ip, int port) {
@@ -42,5 +67,9 @@ private static Logger LOGGER = LogManager.getLogger(Main.class.getName());
                 }
             }
         },10, TimeUnit.SECONDS);
+    }
+
+    public static UnoController getUnoController() {
+        return unoController;
     }
 }
