@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 
+import java.util.List;
 import java.util.Map;
 
 public class UnoController {
@@ -24,7 +25,7 @@ public class UnoController {
     @FXML
     private Label topCardLabel;
     @FXML
-    private ListView cardList;
+    private ListView<String> cardList;
 
     private CommandWorker worker;
 
@@ -44,7 +45,17 @@ public class UnoController {
     }
 
     public void onDrawButtonClick() {
-        worker.process(new Command(CommandType.GAME_REQUESTCARD,"94"));
+        worker.process(new Command(CommandType.GAME_REQUESTCARD,"1"));
+    }
+
+    public void setCardList(List<Card> cards) {
+        for (Card c : cards) {
+            cardList.getItems().add(c.toString());
+        }
+    }
+    public void onLayCardButtonClick() {
+        worker.process(new Command(CommandType.GAME_LAYCARD,cardList.getSelectionModel().getSelectedItem()));
+        cardList.getItems().remove(cardList.getSelectionModel().getSelectedItem());
     }
     public void newWorker(Map<String, AbstractCommandHandler> handlers) {
         worker = new CommandWorker(handlers);

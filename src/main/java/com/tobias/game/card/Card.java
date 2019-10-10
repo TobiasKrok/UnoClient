@@ -29,6 +29,6 @@ public class Card {
 
     @Override
     public String toString() {
-        return "cardColor: " + cardColor + " value: " + value + " cardType: " + cardType;
+        return "["+  cardType + "," + cardColor + "," + value + "]";
     }
 }

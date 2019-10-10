@@ -10,7 +10,7 @@
     <children>
         <AnchorPane accessibleText="k" maxHeight="-1.0" maxWidth="-1.0" prefHeight="400.0" prefWidth="639.0" VBox.vgrow="ALWAYS">
             <children>
-                <Button fx:id="layCardButton" layoutX="325.0" layoutY="168.0" mnemonicParsing="false"  text="Lay card" />
+                <Button fx:id="layCardButton" layoutX="325.0" layoutY="168.0" mnemonicParsing="false"  text="Lay card" onMouseClicked="#onLayCardButtonClick"/>
                 <Button fx:id="drawButton" layoutX="232.0" layoutY="168.0" mnemonicParsing="false"  text="Draw" onMouseClicked="#onDrawButtonClick" />
                 <Label layoutX="254.0" layoutY="30.0" text="Deck count:" />
                 <Label layoutX="254.0" layoutY="87.0" text="Card on table:" />

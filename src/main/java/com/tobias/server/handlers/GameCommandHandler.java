@@ -10,6 +10,8 @@ import com.tobias.game.card.CardType;
 import com.tobias.server.ServerConnection;
 import com.tobias.server.command.Command;
 import com.tobias.server.command.CommandType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +25,7 @@ public class GameCommandHandler extends AbstractCommandHandler {
 
     private GameManager gameManager;
     private ServerConnection serverConnection;
+    private static final Logger LOGGER = LogManager.getLogger(GameCommandHandler.class.getName());
 
     public GameCommandHandler(ServerConnection serverConnection) {
         this.serverConnection = serverConnection;
@@ -36,7 +39,9 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 gameManager.createNewGame(new ClientPlayer(serverConnection.getId()), parseOpponentPlayers(command.getData()));
                 break;
             case GAME_SETCARD:
-                gameManager.addCardToPlayer(parseCards(command.getData()));
+                List<Card> cards = parseCards(command.getData());
+                gameManager.addCardToPlayer(cards);
+                Main.getUnoController().setCardList(cards);
                 break;
             case GAME_SETTOPCARD:
                 // We should only receive a single card here. That's why we reference index 0.
@@ -60,6 +65,12 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 break;
             case GAME_REQUESTCARD:
                 serverConnection.write(new Command(CommandType.GAME_REQUESTCARD,command.getData()));
+                break;
+            case GAME_LAYCARD:
+                serverConnection.write(new Command(CommandType.GAME_LAYCARD,command.getData()));
+                break;
+            default:
+                LOGGER.error("Could not process command: " + command.toString());
                 break;
         }
     }
