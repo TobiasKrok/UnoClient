@@ -27,7 +27,7 @@ public class CommandWorker implements Runnable{
                 while (queue.isEmpty()){
                     try {
                         queue.wait();
-                        Thread.sleep(1000);
+                        Thread.sleep(300);
                     } catch (InterruptedException e) {
                         LOGGER.error("Worker interrupted, perhaps we disconnected?",e);
                     }

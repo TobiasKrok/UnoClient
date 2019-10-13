@@ -1,6 +1,5 @@
 package com.tobias.gui;
 
-import com.tobias.game.Player;
 import com.tobias.game.card.Card;
 import com.tobias.server.command.Command;
 import com.tobias.server.command.CommandType;
@@ -34,14 +33,10 @@ public class UnoController {
     }
 
     public void setDeckCount(int count) {
-        Platform.runLater(() -> {
-            deckCountLabel.setText(String.valueOf(count));
-        });
+        Platform.runLater(() -> deckCountLabel.setText(String.valueOf(count)));
     }
     public void setTopCard(Card c) {
-        Platform.runLater(() -> {
-            topCardLabel.setText(c.toString());
-        });
+        Platform.runLater(() -> topCardLabel.setText(c.toString()));
     }
 
     public void onDrawButtonClick() {
@@ -50,7 +45,7 @@ public class UnoController {
 
     public void setCardList(List<Card> cards) {
         for (Card c : cards) {
-            cardList.getItems().add(c.toString());
+            Platform.runLater(() -> cardList.getItems().add(c.toString()));
         }
     }
     public void onLayCardButtonClick() {
