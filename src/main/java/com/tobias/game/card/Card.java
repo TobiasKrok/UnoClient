@@ -11,7 +11,6 @@ public class Card {
         // Return zero instead of null if card is a special card. Special cards does not have a value.
         this.value = value;
     }
-    // If card is not a special card, CardType will be set to NORMAL as default.
 
 
     public CardColor getCardColor() {
