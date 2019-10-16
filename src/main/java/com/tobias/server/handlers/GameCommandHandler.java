@@ -69,6 +69,10 @@ public class GameCommandHandler extends AbstractCommandHandler {
             case GAME_LAYCARD:
                 serverConnection.write(new Command(CommandType.GAME_LAYCARD,command.getData()));
                 break;
+            case GAME_SKIPTURN:
+                serverConnection.write(new Command(CommandType.GAME_SKIPTURN,String.valueOf(serverConnection.getId())));
+            case GAME_SETCOLOR:
+                break;
             default:
                 LOGGER.error("Could not process command: " + command.toString());
                 break;

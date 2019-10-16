@@ -51,6 +51,7 @@ public class UnoController {
     public void onLayCardButtonClick() {
         worker.process(new Command(CommandType.GAME_LAYCARD,cardList.getSelectionModel().getSelectedItem()));
         cardList.getItems().remove(cardList.getSelectionModel().getSelectedItem());
+
     }
     public void newWorker(Map<String, AbstractCommandHandler> handlers) {
         worker = new CommandWorker(handlers);
