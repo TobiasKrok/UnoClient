@@ -29,7 +29,7 @@ public class Table {
         return cardsLayedCount;
     }
 
-    public void setCardsLayedCount(int cardsLayed) {
-        this.cardsLayedCount = cardsLayed;
+    public void setCardsLaidCount(int cardsLaid) {
+        this.cardsLayedCount = cardsLaid;
     }
 }

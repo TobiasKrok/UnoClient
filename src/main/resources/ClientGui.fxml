@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.tobias.gui.components.CardView?>
+<?import com.tobias.gui.components.TableCardView?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
-
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tobias.gui.UnoController">
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<AnchorPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tobias.gui.UnoController">
     <children>
-        <AnchorPane accessibleText="k" maxHeight="-1.0" maxWidth="-1.0" prefHeight="400.0" prefWidth="639.0" VBox.vgrow="ALWAYS">
-            <children>
-                <Button fx:id="layCardButton" layoutX="325.0" layoutY="168.0" mnemonicParsing="false"  text="Lay card" onMouseClicked="#onLayCardButtonClick"/>
-                <Button fx:id="drawButton" layoutX="232.0" layoutY="168.0" mnemonicParsing="false"  text="Draw" onMouseClicked="#onDrawButtonClick" />
-                <Label layoutX="254.0" layoutY="30.0" text="Deck count:" />
-                <Label layoutX="254.0" layoutY="87.0" text="Card on table:" />
-                <Label fx:id="deckCountLabel" layoutX="341.0" layoutY="30.0" text="count" />
-                <Label fx:id="topCardLabel" layoutX="343.0" layoutY="87.0" text="card" />
-            <ListView  fx:id="cardList" layoutX="87.0" layoutY="211.0" prefHeight="182.0" prefWidth="461.0" />
-            </children>
-        </AnchorPane>
+        <VBox fx:id="left" layoutX="-1.0" prefHeight="319.0" prefWidth="107.0"   AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="100.0" alignment="CENTER"/>
+        <HBox fx:id="top" layoutX="234.0" prefHeight="100.0" prefWidth="389.0"  AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="0.0" alignment="CENTER" />
+        <VBox fx:id="right" layoutX="793.0" prefHeight="319.0" prefWidth="107.0"  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0" alignment="CENTER"/>
+        <ImageView fitHeight="120.0" fitWidth="80.0" layoutX="340.0" layoutY="200.0" pickOnBounds="true"  rotate="90.0" fx:id="deck"/>
+        <!--<ImageView fitHeight="150" fitWidth="100.0" layoutX="366.0" layoutY="151.0" pickOnBounds="true"  fx:id="cardOnTable"/> -->
+        <TableCardView fx:id="cardOnTable" prefHeight="200" prefWidth="170" layoutX="600.0" layoutY="151.0" pickOnBounds="true"/>
+        <CardView fx:id="cw" prefHeight="178.0" prefWidth="446.0" alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" />
     </children>
+
 </AnchorPane>

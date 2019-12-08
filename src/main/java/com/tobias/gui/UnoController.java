@@ -1,58 +1,54 @@
 package com.tobias.gui;
 
 import com.tobias.game.card.Card;
-import com.tobias.server.command.Command;
-import com.tobias.server.command.CommandType;
+import com.tobias.gui.components.CardView;
+import com.tobias.gui.components.TableCardView;
 import com.tobias.server.command.CommandWorker;
 import com.tobias.server.handlers.AbstractCommandHandler;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
-import java.util.List;
+import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 public class UnoController {
     @FXML
-    private Button drawButton;
+    private CardView playerHand;
     @FXML
-    private Button layCardButton;
+    private AnchorPane mainPane;
     @FXML
-    private Label deckCountLabel;
+    private ImageView deck;
     @FXML
-    private Label topCardLabel;
+    private TableCardView cardsOnTable;
     @FXML
-    private ListView<String> cardList;
-
+    private VBox leftOpponents;
+    @FXML
+    private VBox rightOpponents;
+    @FXML
+    private HBox topOpponents;
+    private Map<String,Image> cardImages;
     private CommandWorker worker;
 
     public void initialize() {
-
-    }
-
-    public void setDeckCount(int count) {
-        Platform.runLater(() -> deckCountLabel.setText(String.valueOf(count)));
-    }
-    public void setTopCard(Card c) {
-        Platform.runLater(() -> topCardLabel.setText(c.toString()));
-    }
-
-    public void onDrawButtonClick() {
-        worker.process(new Command(CommandType.GAME_REQUESTCARD,"1"));
-    }
-
-    public void setCardList(List<Card> cards) {
-        for (Card c : cards) {
-            Platform.runLater(() -> cardList.getItems().add(c.toString()));
+        File imageDir = new File(getClass().getResource("/images/cards").getFile());
+        cardImages = new HashMap<>();
+        for (File f : imageDir.listFiles()) {
+            String cardName = f.getName().substring(0,f.getName().indexOf("."));
+            Image cardImage = new Image(f.toURI().toString(),200,250,false,false);
+            cardImages.put(cardName,cardImage);
         }
+        deck.setImage(cardImages.get("CARD_BACK"));
     }
-    public void onLayCardButtonClick() {
-        worker.process(new Command(CommandType.GAME_LAYCARD,cardList.getSelectionModel().getSelectedItem()));
-        cardList.getItems().remove(cardList.getSelectionModel().getSelectedItem());
+
+    public void addCardToPlayer(Card c) {
 
     }
+
     public void newWorker(Map<String, AbstractCommandHandler> handlers) {
         worker = new CommandWorker(handlers);
         Thread t = new Thread(worker);
@@ -60,4 +56,11 @@ public class UnoController {
         t.start();
     }
 
+    public Image getCardImageByName(String name) {
+        if(cardImages.get(name) == null) {
+            // Return back card image to avoid null
+            return cardImages.get("CARD_BACK");
+        }
+        return cardImages.get(name);
+    }
 }

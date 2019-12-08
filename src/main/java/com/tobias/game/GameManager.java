@@ -34,7 +34,7 @@ public class GameManager {
     }
 
     public void setCardsOnTableCount(int count) {
-        table.setCardsLayedCount(count);
+        table.setCardsLaidCount(count);
     }
 
     public void setOpponentPlayerCardCount(Map<Integer, Integer> count) {

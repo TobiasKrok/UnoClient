@@ -1,7 +1,6 @@
 package com.tobias.server;
 
 
-import com.tobias.Main;
 import com.tobias.server.command.Command;
 import com.tobias.server.command.CommandWorker;
 import com.tobias.server.handlers.AbstractCommandHandler;
@@ -33,8 +32,6 @@ public class ServerConnection implements Runnable {
         this.worker = new CommandWorker(handlers);
         this.socket = socket;
         this.running = false;
-        this.handlers.put("CLIENT",new ClientCommandHandler(this));
-        this.handlers.put("GAME",new GameCommandHandler(this));
         try {
             this.output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -44,12 +41,9 @@ public class ServerConnection implements Runnable {
     }
 
     public void run() {
-
-        LOGGER.debug("ServerConnection started");
-        this.workerThread = new Thread(this.worker);
-        this.workerThread.setName("CommandWorker-"+ workerThread.getId());
-        LOGGER.debug("CommandWorker started");
-        workerThread.start();
+        this.handlers.put("CLIENT",new ClientCommandHandler(this));
+        this.handlers.put("GAME",new GameCommandHandler(this));
+        newWorker();
         this.running = true;
         while (running) {
             try {
@@ -97,6 +91,14 @@ public class ServerConnection implements Runnable {
             }
 
         }
+    }
+
+    private void newWorker() {
+        LOGGER.debug("ServerConnection started");
+        this.workerThread = new Thread(this.worker);
+        this.workerThread.setName("CommandWorker-"+ workerThread.getId());
+        workerThread.start();
+        LOGGER.debug("CommandWorker started");
     }
 
     public void close() {
