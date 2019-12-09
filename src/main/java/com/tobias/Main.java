@@ -31,7 +31,7 @@ private static UnoController unoController;
        List<String> params = getParameters().getRaw();
         ServerConnection serverConnection =  startServerConnection(params.get(0), Integer.parseInt(params.get(1)));
         checkForId(serverConnection);
-      //  if(serverConnection != null) {
+        if(serverConnection != null) {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(getClass().getResource("/ClientGui.fxml"));
             Parent root = fxmlLoader.load();
@@ -39,9 +39,9 @@ private static UnoController unoController;
             stage.setTitle("Uno ALPHA");
             root.getStylesheets().addAll(this.getClass().getResource("/style.css").toExternalForm());
             unoController = fxmlLoader.getController();
-           // unoController.newWorker(serverConnection.getHandlers());
+            unoController.newWorker(serverConnection.getHandlers());
             stage.show();
-     //   }
+        }
     }
 
     private static ServerConnection startServerConnection(String ip, int port) {
