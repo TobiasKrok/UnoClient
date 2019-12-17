@@ -51,6 +51,9 @@ public class GameManager {
             game.setCurrentPlayerTurn(game.getOpponentPlayerById(id));
         }
     }
+    public int getClientPlayerId(){
+        return game.getClientPlayer().getId();
+    }
 
     public void disconnectPlayer(int id) {
         // TODO disconnect ClientPlayer

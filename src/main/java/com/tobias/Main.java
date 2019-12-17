@@ -2,6 +2,7 @@ package com.tobias;
 
 
 import com.tobias.gui.UnoController;
+import com.tobias.gui.components.OpponentPlayerView;
 import com.tobias.server.ServerConnection;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -37,7 +38,7 @@ private static UnoController unoController;
             Parent root = fxmlLoader.load();
             stage.setScene(new Scene(root,1100,600));
             stage.setTitle("Uno ALPHA");
-            root.getStylesheets().addAll(this.getClass().getResource("/style.css").toExternalForm());
+            root.getStylesheets().addAll(this.getClass().getResource("/css/style.css").toExternalForm());
             unoController = fxmlLoader.getController();
             unoController.newWorker(serverConnection.getHandlers());
             stage.show();

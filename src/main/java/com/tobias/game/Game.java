@@ -5,7 +5,7 @@ import com.tobias.game.card.Table;
 
 import java.util.List;
 
-public class Game {
+ class Game {
 
     private ClientPlayer clientPlayer;
     private Table table;
@@ -51,14 +51,14 @@ public class Game {
         this.currentPlayerTurn = player;
     }
 
-    public int getDeckCount() {
+    int getDeckCount() {
         return table.getDeck().getCount();
     }
-    public Card getTopCard() {
+    Card getTopCard() {
         return table.getTopCard();
     }
 
-    public List<Card> getClientPlayerHand() {
+    List<Card> getClientPlayerHand() {
         return clientPlayer.getHand();
     }
 }

@@ -8,7 +8,6 @@ import javafx.scene.paint.Color;
 
 public class OpponentPlayerView extends Region {
 
-    private int cards;
     private ImageView card;
     private Label cardCountLabel;
     private Label userNameLabel;
@@ -20,6 +19,8 @@ public class OpponentPlayerView extends Region {
         userNameLabel.setText(userName);
         userNameLabel.setTextFill(Color.WHITE);
         userNameLabel.setStyle("-fx-font-weight: bold");
+        cardCountLabel.setTextFill(Color.CYAN);
+        cardCountLabel.setStyle("-fx-font-weight: bold");
         getChildren().add(card);
         getChildren().add(cardCountLabel);
         getChildren().add(userNameLabel);
@@ -28,8 +29,10 @@ public class OpponentPlayerView extends Region {
 
     private void adjustLabels() {
         Bounds cardBounds = card.localToParent(card.getBoundsInLocal());
-        userNameLabel.setLayoutY(cardBounds.getMaxY() + 30);
+        userNameLabel.setLayoutY(cardBounds.getMaxY() + 15);
         userNameLabel.setLayoutX(cardBounds.getMaxX() / 2);
+        cardCountLabel.setLayoutY(cardBounds.getMaxY() + 30);
+        cardCountLabel.setLayoutX(cardBounds.getMaxX() / 4 - 10);
     }
     public void rotateLabels(double v) {
         userNameLabel.setRotate(v);
@@ -39,6 +42,7 @@ public class OpponentPlayerView extends Region {
     public ImageView getCard() {
         return this.card;
     }
+
     public void setCardCount(int n) {
         cardCountLabel.setText("Card count: " + n);
     }
