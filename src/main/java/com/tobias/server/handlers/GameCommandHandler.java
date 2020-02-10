@@ -43,6 +43,8 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 // Add to UnoController view. This creates a new OpponentPlayerView
                 for(OpponentPlayer player : opponents) {
                     Main.getUnoController().addOpponent(player);
+                    //TODO find another fix to wait for first opponentplayerview initialization.
+                    try {Thread.sleep(100);} catch (InterruptedException e){}
                 }
                 break;
             case GAME_SETCARD:

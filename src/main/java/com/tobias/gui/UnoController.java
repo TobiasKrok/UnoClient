@@ -94,13 +94,37 @@ public class UnoController {
     }
 
     public void opponentAddCardToTable(int opponentId, Card c) {
-        cardView.setCardProperties(c.getImage());
-        Platform.runLater(() -> cardsOnTable.addCard(c.getImage()));
+        OpponentPlayerView view = getOpponentPlayerViewById(opponentId);
+        if(!(view == null)) {
+            cardView.setCardProperties(c.getImage());
+            Platform.runLater(() -> mainPane.getChildren().add(c.getImage()));
+            Bounds bounds = view.getCard().localToScene(view.getCard().getBoundsInLocal());
+            Bounds cardsOnTableBounds = cardsOnTable.localToScene(cardsOnTable.getBoundsInLocal());
+            RotateTransition rotateTransition = new RotateTransition(Duration.millis(500), c.getImage());
+            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(1000), c.getImage());
+            ParallelTransition parallelTransition = new ParallelTransition(rotateTransition, translateTransition);
+            int angle = getAngleForOpponentView(view);
+            translateTransition.setFromY(bounds.getMaxY());
+            translateTransition.setFromX(bounds.getMaxX());
+            translateTransition.setToY(cardsOnTableBounds.getMinY() - 50);
+            translateTransition.setToX(cardsOnTableBounds.getMinX() + 50);
+            rotateTransition.setFromAngle(angle);
+            rotateTransition.setToAngle(0);
+            parallelTransition.setOnFinished((event) -> {
+                Platform.runLater(() -> mainPane.getChildren().remove(c.getImage()));
+                c.getImage().setTranslateY(0);
+                c.getImage().setTranslateX(0);
+                Platform.runLater(() -> cardsOnTable.addCard(c.getImage()));
+
+            });
+            parallelTransition.play();
+        }
+
     }
 
 
 
-    public void addOpponent(OpponentPlayer player) {
+    public synchronized void addOpponent(OpponentPlayer player) {
         ImageView backCard = getCardImageViewByName("CARD_BACK");
         backCard.setFitWidth(80);
         backCard.setFitHeight(120);
@@ -144,6 +168,18 @@ public class UnoController {
         return opponentPlayerViews.get(id);
     }
 
+    private int getAngleForOpponentView(OpponentPlayerView view) {
+        int angle;
+        if(leftOpponents.getChildren().contains(view)) {
+            angle = -90;
+        } else if(rightOpponents.getChildren().contains(view)) {
+            angle = 90;
+        } else {
+            angle = 180;
+        }
+        return angle;
+    }
+
     private void animateCardToHand(Card card, int delay) {
         Bounds deckBounds = deck.localToScene(deck.getBoundsInLocal());
         // Set configured width / height specified by CardView.
@@ -171,7 +207,6 @@ public class UnoController {
     }
 
     private void animateCardToOpponent(int opponentId, int delay) {
-
         OpponentPlayerView view = getOpponentPlayerViewById(opponentId);
         Bounds bounds = view.getCard().localToScene(view.getCard().getBoundsInLocal());
         Bounds deckBounds = deck.localToScene(deck.getBoundsInLocal());
@@ -181,20 +216,13 @@ public class UnoController {
         RotateTransition rotateTransition = new RotateTransition(Duration.millis(500), backCard);
         TranslateTransition translateTransition = new TranslateTransition(Duration.millis(1000), backCard);
         ParallelTransition parallelTransition = new ParallelTransition(rotateTransition, translateTransition);
-        int angle;
-        if (leftOpponents.getChildren().contains(view)) {
-            angle = -90;
-            translateTransition.setToY(bounds.getMinY() - 30);
-            translateTransition.setToX(bounds.getMinX());
-        } else if (rightOpponents.getChildren().contains(view)) {
-            translateTransition.setToY(bounds.getMinY() - 30);
-            translateTransition.setToX(bounds.getMinX());
-            angle = 90;
-        } else {
+        int angle = getAngleForOpponentView(view);
+        if(topOpponents.getChildren().contains(view)) {
             translateTransition.setToY(bounds.getMinY());
-            translateTransition.setToX(bounds.getMinX());
-            angle = 180;
+        } else {
+            translateTransition.setToY(bounds.getMinY() - 30);
         }
+        translateTransition.setToX(bounds.getMinX());
         parallelTransition.setDelay(Duration.millis(delay));
         rotateTransition.setFromAngle(90);
         rotateTransition.setToAngle(angle);

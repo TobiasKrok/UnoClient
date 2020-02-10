@@ -22,7 +22,7 @@ public class CommandWorker implements Runnable{
 
 
     public void run(){
-        while (true) {
+        while (!Thread.interrupted()) {
             synchronized (queue) {
                 while (queue.isEmpty()){
                     try {
