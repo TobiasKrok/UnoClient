@@ -81,7 +81,7 @@ public class UnoController {
         double pos = mainPane.getHeight() - bounds.getMaxY();
         tt.setFromX(c.getImage().getX());
         tt.setFromY(c.getImage().getY());
-        tt.setToY(-pos + 20);
+        tt.setToY(-pos );
         tt.setToX(bounds.getMinX() - cBounds.getMinX());
         tt.setOnFinished((actionEvent -> {
             cardView.getChildren().remove(c.getImage());
@@ -105,15 +105,13 @@ public class UnoController {
             ParallelTransition parallelTransition = new ParallelTransition(rotateTransition, translateTransition);
             int angle = getAngleForOpponentView(view);
             translateTransition.setFromY(bounds.getMaxY());
-            translateTransition.setFromX(bounds.getMaxX());
-            translateTransition.setToY(cardsOnTableBounds.getMinY() - 50);
+            translateTransition.setFromX(bounds.getMinX());
+            translateTransition.setToY(cardsOnTableBounds.getMinY() + 20);
             translateTransition.setToX(cardsOnTableBounds.getMinX() + 50);
             rotateTransition.setFromAngle(angle);
             rotateTransition.setToAngle(0);
             parallelTransition.setOnFinished((event) -> {
                 Platform.runLater(() -> mainPane.getChildren().remove(c.getImage()));
-                c.getImage().setTranslateY(0);
-                c.getImage().setTranslateX(0);
                 Platform.runLater(() -> cardsOnTable.addCard(c.getImage()));
 
             });
@@ -232,5 +230,4 @@ public class UnoController {
         parallelTransition.setOnFinished((actionEvent -> mainPane.getChildren().remove(backCard)));
         parallelTransition.play();
     }
-
-    }
+}

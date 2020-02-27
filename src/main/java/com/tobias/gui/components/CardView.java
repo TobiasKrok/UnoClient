@@ -1,6 +1,8 @@
 package com.tobias.gui.components;
 
 
+//import com.tobias.Main;
+
 import com.tobias.Main;
 import com.tobias.game.card.Card;
 import javafx.animation.TranslateTransition;
