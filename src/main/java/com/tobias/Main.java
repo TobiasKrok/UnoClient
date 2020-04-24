@@ -22,6 +22,7 @@ public class Main extends Application {
 private static Logger LOGGER = LogManager.getLogger(Main.class.getName());
 private static UnoController unoController;
 
+
     public static void main(String[] args) {
         launch(args);
     }
