@@ -15,10 +15,7 @@ import javafx.scene.image.ImageView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,19 +48,28 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 List<Card> cards = parseCards(command.getData());
                 gameManager.addCardToPlayer(cards);
                 Main.getUnoController().addCardToPlayer(cards);
+                Main.getUnoController().setWaitingForCard(false);
                 break;
             case GAME_SETOPPONENTPLAYERCARDCOUNT:
                 Map<Integer, Integer> cardCounts = parseOpponentPlayerIdCardCount(command.getData());
                 gameManager.setOpponentPlayerCardCount(cardCounts);
-                cardCounts.forEach((key,value) ->{
+                cardCounts.forEach((key,value) -> {
                     if(key != serverConnection.getId()) {
                         Platform.runLater(() ->  Main.getUnoController().getOpponentPlayerViewById(key).setCardCount(value));
                     }
                 });
                 break;
             case GAME_SETNEXTTURN:
-                gameManager.setNextTurn(Integer.parseInt(command.getData()));
+                int id = Integer.parseInt(command.getData());
+                gameManager.setNextTurn(id);
+                if(gameManager.isClientPlayerTurn()) {
+                    // -1 means that is it the clients turn
+                    Main.getUnoController().setNextPlayerTurn(-1);
+                } else {
+                    Main.getUnoController().setNextPlayerTurn(id);
+                }
                 break;
+                //todo remove
             case GAME_SETDECKCOUNT:
                 gameManager.setDeckCount(Integer.parseInt(command.getData()));
           //      Main.getUnoController().setDeckCount(Integer.parseInt(command.getData()));
@@ -91,7 +97,10 @@ public class GameCommandHandler extends AbstractCommandHandler {
             case GAME_SKIPTURN:
                 serverConnection.write(new Command(CommandType.GAME_SKIPTURN,String.valueOf(serverConnection.getId())));
             case GAME_SETCOLOR:
-                //TODO implement
+                Platform.runLater(() -> Main.getUnoController().setNextColor(CardColor.valueOf(command.getData())));
+                break;
+            case GAME_CLIENTSETCOLOR:
+                serverConnection.write(new Command(CommandType.GAME_CLIENTSETCOLOR,command.getData()));
                 break;
             default:
                 LOGGER.error("Could not process command: " + command.toString());

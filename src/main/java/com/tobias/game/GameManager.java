@@ -29,14 +29,6 @@ public class GameManager {
         table.getDeck().setCount(count);
     }
 
-    public void setTopCard(Card card) {
-        table.setTopCard(card);
-    }
-
-    public void setCardsOnTableCount(int count) {
-        table.setCardsLaidCount(count);
-    }
-
     public void setOpponentPlayerCardCount(Map<Integer, Integer> count) {
         int oppId = (Integer) count.keySet().toArray()[0];
         if (game.getOpponentPlayerById((oppId)) != null) {
@@ -50,6 +42,10 @@ public class GameManager {
         } else {
             game.setCurrentPlayerTurn(game.getOpponentPlayerById(id));
         }
+    }
+
+    public boolean isClientPlayerTurn() {
+        return (game.getCurrentPlayerTurn() == game.getClientPlayer());
     }
     public int getClientPlayerId(){
         return game.getClientPlayer().getId();

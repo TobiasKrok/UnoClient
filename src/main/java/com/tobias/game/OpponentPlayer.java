@@ -14,7 +14,7 @@ public class OpponentPlayer extends Player {
         return cardsOnHandCount;
     }
 
-    public void setCardsOnHandCount(int count) {
+    void setCardsOnHandCount(int count) {
         this.cardsOnHandCount = count;
     }
 

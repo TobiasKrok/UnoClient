@@ -41,9 +41,12 @@ import java.util.List;
         return null;
     }
 
-    void start() {
-    }
-    List<OpponentPlayer> getOpponentPlayers() {
+
+     public Player getCurrentPlayerTurn() {
+         return currentPlayerTurn;
+     }
+
+     List<OpponentPlayer> getOpponentPlayers() {
         return opponentPlayers;
     }
 

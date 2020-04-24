@@ -2,7 +2,6 @@ package com.tobias;
 
 
 import com.tobias.gui.UnoController;
-import com.tobias.gui.components.OpponentPlayerView;
 import com.tobias.server.ServerConnection;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -41,8 +40,18 @@ private static UnoController unoController;
             root.getStylesheets().addAll(this.getClass().getResource("/css/style.css").toExternalForm());
             unoController = fxmlLoader.getController();
             unoController.newWorker(serverConnection.getHandlers());
+            setStageSizeChangedEvents(stage);
             stage.show();
         }
+    }
+
+    private static void setStageSizeChangedEvents(Stage stage) {
+        stage.widthProperty().addListener((obv, oldVal, newVal) -> {
+            unoController.adjustComponentWidth(stage.getWidth());
+        });
+        stage.heightProperty().addListener((obv, oldVal, newVal) -> {
+            unoController.adjustComponentHeight(stage.getHeight());
+        });
     }
 
     private static ServerConnection startServerConnection(String ip, int port) {
@@ -60,13 +69,10 @@ private static UnoController unoController;
     }
     private static void checkForId(ServerConnection serverConnection) {
         ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-        ses.schedule(new Runnable() {
-            @Override
-            public void run() {
-                if(!serverConnection.idReceived()){
-                    LOGGER.fatal("Server did not accept connection, no ID was received. Disconnecting..");
-                    serverConnection.close();
-                }
+        ses.schedule(() -> {
+            if(!serverConnection.idReceived()){
+                LOGGER.fatal("Server did not accept connection, no ID was received. Disconnecting..");
+                serverConnection.close();
             }
         },10, TimeUnit.SECONDS);
     }

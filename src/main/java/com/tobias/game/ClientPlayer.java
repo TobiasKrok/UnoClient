@@ -7,7 +7,6 @@ import java.util.List;
 
 public class ClientPlayer extends Player {
     private List<Card> hand;
-    private int id;
 
     public ClientPlayer(int id) {
         super(id);
@@ -17,6 +16,7 @@ public class ClientPlayer extends Player {
     void addToHand(List<Card> cards) {
         this.hand.addAll(cards);
     }
+
     public List<Card> getHand() {
         return hand;
     }
