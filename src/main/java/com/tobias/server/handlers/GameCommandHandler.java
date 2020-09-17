@@ -135,7 +135,13 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 }
                 break;
             case GAME_FINISHED:
-                Platform.runLater(() -> Main.getUnoController().showGameWonLabel(Main.getUnoController().getOpponentPlayerViewById(Integer.parseInt(command.getData())).getUsername()));
+                String username;
+                if(Integer.parseInt(command.getData()) == serverConnection.getId()) {
+                    username = "YOU";
+                } else {
+                 username=Main.getUnoController().getOpponentPlayerViewById(Integer.parseInt(command.getData())).getUsername();
+                }
+                Platform.runLater(() -> Main.getUnoController().showGameWonLabel(username));
                 break;
             default:
                 LOGGER.error("Could not process command: " + command.toString());

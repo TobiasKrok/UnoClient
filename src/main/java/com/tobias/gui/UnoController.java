@@ -117,8 +117,6 @@ public class UnoController {
                     if(cardsDrawn == 3 && !clientCanPlay()) {
                         worker.process(new Command(CommandType.GAME_SKIPTURN));
                     }
-//            } else if(cardsDrawn == 3 && !clientCanPlay()) {
-//                worker.process(new Command(CommandType.GAME_SKIPTURN));
             }
         });
         addNodesToDynamicPositioning();
@@ -203,7 +201,7 @@ public class UnoController {
     }
 
     public void showGameWonLabel(String username) {
-        gameWonLabel.setText(username + " HAS WON THE GAME!!!");
+        gameWonLabel.setText(username + "WON THE GAME!!!");
         gameWonLabel.setVisible(true);
         cardView.setCanSelect(false);
     }
@@ -396,7 +394,7 @@ public class UnoController {
     }
 
     // Enables the UNO button if the requirements are hit
-    public void checkForUno() {
+    private void checkForUno() {
         if(isClientsTurn && (cardView.getCards().size() == 2) && clientCanPlay()) {
             showUnoButton(true);
         } else {
