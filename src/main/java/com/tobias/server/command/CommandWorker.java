@@ -12,7 +12,7 @@ public class CommandWorker implements Runnable{
 
 
     private Map<String, AbstractCommandHandler> handlers;
-    private LinkedList<Command> queue;
+    private final LinkedList<Command> queue;
     private static final Logger LOGGER = LogManager.getLogger(CommandWorker.class.getName());
 
     public CommandWorker(Map<String, AbstractCommandHandler> handlers ){
@@ -43,10 +43,7 @@ public class CommandWorker implements Runnable{
     }
 
     public void process(String command) {
-        synchronized (queue) {
-            queue.add(parseCommand(command));
-            queue.notify();
-        }
+        process(parseCommand(command));
     }
     public void process(Command command) {
         synchronized (queue) {

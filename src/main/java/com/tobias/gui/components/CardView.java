@@ -54,7 +54,7 @@ public class CardView extends HBox {
 
 
     public void addItem(Card card) {
-        cards.add(card);
+       // cards.add(card);
         card.getImage().setFitHeight(cardHeight);
         card.getImage().setFitWidth(cardWidth);
         HBox.setMargin(card.getImage(), new Insets(0, margin, 0, 0));
@@ -70,17 +70,19 @@ public class CardView extends HBox {
             tt.setToY(-37);
             tt.play();
         });
+        card.getImage().setOnMouseExited((event) -> {
+            TranslateTransition tt = new TranslateTransition(Duration.millis(100), card.getImage());
+            // Move card back down when mouse exited
+            tt.setToY(0);
+            tt.play();
+        });
         card.getImage().setOnMouseClicked((event) -> {
             if (canSelect && Main.getUnoController().isCardAllowed(card) ) {
                 if (forceColor == CardColor.NONE || card.getCardColor() == forceColor || card.getCardType() == CardType.WILDDRAWFOUR || card.getCardType() == CardType.WILD) {
                     Platform.runLater(() -> card.getImage().setEffect(null));
                     // Clear forceColor
                     forceColor = CardColor.NONE;
-                    // If the player has two cards left, we must tell the UnoController to show the Uno button for all clients.
-                    if(cards.size() == 2) {
-                        Main.getUnoController().setUno(true);
-                    }
-                    // Remove the card from the internal lists
+
                     cards.remove(card);
                     // Remove any events
                     card.getImage().setOnMouseEntered(null);
@@ -91,12 +93,6 @@ public class CardView extends HBox {
             }
         });
 
-        card.getImage().setOnMouseExited((event) -> {
-            TranslateTransition tt = new TranslateTransition(Duration.millis(100), card.getImage());
-            tt.setToY(0);
-            tt.play();
-
-        });
     }
 
     public void setCardProperties(ImageView v) {
@@ -131,16 +127,16 @@ public class CardView extends HBox {
 
     public void setForceColor(CardColor color) {
         forceColor = color;
-        for (Card c : cards) {
-            for (Node n : getChildren()) {
-                if (c.getImage() == n) {
-                    if (c.getCardColor() != color) {
-                        colorAdjust.setSaturation(-0.8);
-                        n.setEffect(colorAdjust);
-                    }
-                }
-            }
-        }
+//        for (Card c : cards) {
+//            for (Node n : getChildren()) {
+//                if (c.getImage() == n) {
+//                    if (c.getCardColor() != color) {
+//                        colorAdjust.setSaturation(-0.8);
+//                        n.setEffect(colorAdjust);
+//                    }
+//                }
+//            }
+//        }
     }
 
     public List<Card> getCards() {

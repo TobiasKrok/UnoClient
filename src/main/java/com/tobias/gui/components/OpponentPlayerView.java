@@ -47,7 +47,7 @@ public class OpponentPlayerView extends Region {
         cardCountLabel.setText("Card count: " + n);
     }
 
-    public String getLabelText() {
+    public String getUsername() {
         return userNameLabel.getText();
     }
 

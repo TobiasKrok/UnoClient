@@ -19,6 +19,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -29,9 +31,13 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 public class UnoController {
@@ -44,6 +50,8 @@ public class UnoController {
     @FXML
     private ImageView unoButton;
     @FXML
+    private ImageView lateUnoButton; // If a client did not say uno, this image will appear. It is different from the Uno button image
+    @FXML
     private TableCardView cardsOnTable;
     @FXML
     private VBox leftOpponents;
@@ -53,37 +61,121 @@ public class UnoController {
     private HBox topOpponents;
     @FXML
     private CardColorPicker colorPicker;
+    @FXML
+    private Label messageLabel;
+    @FXML
+    private Label gameWonLabel;
 
+    private List<String> clientNotificationMessages;
+    private List<Node> dynamicPositionComponents;
     private Map<String, Image> cardImages;
     private Map<Integer, OpponentPlayerView> opponentPlayerViews;
     private CommandWorker worker;
     // Used to indicate if we are waiting to receive a card from server
     private boolean waitingForCard;
-    // Used to indicate if the client has pressed uno when 1 card is left.
+    // Used to indicate if client has 1 card left
+    private boolean isUno;
     private boolean hasPressedUno;
+    private boolean isClientsTurn;
+    // Used to store how many times a client has drawn card when there are no cards that can be played.
+    private int cardsDrawn;
+    private final String cardImagePath = "images/cards";
+
+    public UnoController() {
+        cardImages = new HashMap<>();
+        opponentPlayerViews = new HashMap<>();
+        dynamicPositionComponents = new ArrayList<>();
+        clientNotificationMessages = new ArrayList<>();
+    }
 
 
     public void initialize() {
+
         File imageDir = new File(getClass().getResource("/images/cards").getFile());
-        cardImages = new HashMap<>();
-        opponentPlayerViews = new HashMap<>();
         for (File f : imageDir.listFiles()) {
             String cardName = f.getName().substring(0, f.getName().indexOf("."));
             Image cardImage = new Image(f.toURI().toString(), 200, 250, false, false);
             cardImages.put(cardName, cardImage);
         }
         deck.setImage(getCardImageViewByName("CARD_BACK").getImage());
+        unoButton.setImage(getCardImageViewByName("UNO_BUTTON").getImage());
+        lateUnoButton.setImage(getCardImageViewByName("UNO_LATEBUTTON").getImage());
+        unoButton.setVisible(false);
+        lateUnoButton.setVisible(false);
+        cardView.setCanSelect(false);
         colorPicker.setVisible(false);
+        messageLabel.setVisible(false);
+        messageLabel.setVisible(false);
+        setUnoButtonsEvents();
         colorPicker.setClickEvent();
         colorPicker.setHoverEvent();
         deck.setOnMouseClicked((event) -> {
-            if (!clientCanDraw() && !waitingForCard) {
-                worker.process(new Command(CommandType.GAME_CLIENTDRAWCARD, "1"));
-                waitingForCard = true;
+            if (!clientCanPlay() && !waitingForCard && cardsDrawn != 3) {
+                    worker.process(new Command(CommandType.GAME_CLIENTDRAWCARD, "1"));
+                    cardsDrawn++;
+                    waitingForCard = true;
+                    if(cardsDrawn == 3 && !clientCanPlay()) {
+                        worker.process(new Command(CommandType.GAME_SKIPTURN));
+                    }
+//            } else if(cardsDrawn == 3 && !clientCanPlay()) {
+//                worker.process(new Command(CommandType.GAME_SKIPTURN));
             }
         });
+        addNodesToDynamicPositioning();
+        setMessageLabel();
     }
 
+    // Loads card images from the resource folders as a stream and converts to File objects.
+//    private void loadImageResources() throws IOException {
+//        final File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+//        if(jarFile.isFile()) {
+//            final JarFile jar = new JarFile(jarFile);
+//            final Enumeration<JarEntry> entries = jar.entries();
+//            while (entries.hasMoreElements()) {
+//                final String name = entries.nextElement().getName();
+//                if (name.startsWith(cardImagePath + "/")) { //filter according to the path
+//                    File file = new File(name);
+//
+//                    System.out.println(name + " : " + file.exists());
+//                    if(file.isFile()) {
+//                        System.out.println("hehe");
+//                        String cardName = file.getName().substring(0, file.getName().indexOf("."));
+//                        Image cardImage = new Image(file.toURI().toString(), 200, 250, false, false);
+//                        cardImages.put(cardName, cardImage);
+//                    }
+//                }
+//            }
+//        }
+//    }
+
+
+    private void  setUnoButtonsEvents() {
+        unoButton.setOnMouseEntered((event) -> {
+            unoButton.setEffect(new DropShadow(70, Color.KHAKI));
+        });
+        unoButton.setOnMouseExited((event) ->{
+            unoButton.setEffect(null);
+        });
+        unoButton.setOnMouseClicked((event) -> {
+            if(isUno) {
+                worker.process(new Command(CommandType.GAME_UNO));
+                hasPressedUno = true;
+                showUnoButton(false);
+            }
+        });
+        lateUnoButton.setOnMouseEntered((event) -> {
+            lateUnoButton.setEffect(new DropShadow(70,Color.KHAKI));
+        });
+        lateUnoButton.setOnMouseExited((event) -> {
+            lateUnoButton.setEffect(null);
+        });
+        lateUnoButton.setOnMouseClicked((event) -> {
+            // Send a FORGOTUNO command. That means that an opponent player forgot to press UNO.
+            // OPPONENT tag is used to indicate for the command handler that an opponent player forgot to say UNO.
+            worker.process(new Command(CommandType.GAME_FORGOTUNO,"OPPONENT"));
+            lateUnoButton.setVisible(false);
+        });
+    }
     public void addCardToPlayer(List<Card> cards) {
         int delay = 0;
         for (Card c : cards) {
@@ -91,6 +183,32 @@ public class UnoController {
             animateCardToHand(c, delay);
             delay += 300;
         }
+        checkForUno();
+    }
+
+    // Loops every 3 seconds to display messages in the clientNotificationMessages list
+    private void setMessageLabel() {
+        ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+        ses.scheduleAtFixedRate(() -> {
+            if(clientNotificationMessages.size() > 0) {
+                messageLabel.setVisible(true);
+                Platform.runLater(() -> {
+                    messageLabel.setText(clientNotificationMessages.get(0));
+                    clientNotificationMessages.remove(0);
+                });
+            } else {
+                messageLabel.setVisible(false);
+            }
+        },0,5,TimeUnit.SECONDS);
+    }
+
+    public void showGameWonLabel(String username) {
+        gameWonLabel.setText(username + " HAS WON THE GAME!!!");
+        gameWonLabel.setVisible(true);
+        cardView.setCanSelect(false);
+    }
+    public void addClientNotificationMessage(String message) {
+        clientNotificationMessages.add(message);
     }
 
     public void addCardToOpponent(int opponentId, int cardCount) {
@@ -101,9 +219,33 @@ public class UnoController {
         }
     }
 
-    public void setUno(boolean setUno) {
-
+    private void showUnoButton(boolean uno) {
+        if(uno) {
+            isUno = true;
+            unoButton.setVisible(true);
+        } else {
+            isUno = false;
+            unoButton.setVisible(false);
+        }
     }
+
+    public void showForgotUnoButton() {
+        ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+        ses.submit(() -> Platform.runLater(() -> lateUnoButton.setVisible(true)));
+        ses.schedule(() -> Platform.runLater(()  -> lateUnoButton.setVisible(false)),1500, TimeUnit.MILLISECONDS);
+    }
+
+    public boolean isUno() {
+        return isUno;
+    }
+
+    public boolean hasPressedUno() {
+        return hasPressedUno;
+    }
+    public void setHasPressedUno(boolean hasPressedUno) {
+        this.hasPressedUno = hasPressedUno;
+    }
+
     public void setWaitingForCard(boolean waitingForCard) {
         this.waitingForCard = waitingForCard;
     }
@@ -113,11 +255,16 @@ public class UnoController {
     }
 
     public void setNextPlayerTurn(int id) {
-        // If id is -1, it means that it is the clients turn, not an opponent. If the id is anything other than -1 then its a opponent.
+        // If id is -1, it means that it is the clients turn, not an opponent. If the id is anything other than -1 then its an opponent.
         if (id == -1) {
+            cardsDrawn = 0;
+            isClientsTurn = true;
             cardView.setCanSelect(true);
             opponentPlayerViews.forEach((key, opv) -> opv.getCard().setEffect(null));
+            checkForUno();
         } else {
+            showUnoButton(false);
+            isClientsTurn = false;
             DropShadow ds = new DropShadow();
             ds.setColor(Color.KHAKI);
             ds.setHeight(70);
@@ -132,7 +279,7 @@ public class UnoController {
         colorPicker.setVisible(false);
     }
 
-    private boolean clientCanDraw() {
+    private boolean clientCanPlay() {
         for (Card card : cardView.getCards()) {
             if (isCardAllowed(card)) {
                 return true;
@@ -151,7 +298,6 @@ public class UnoController {
                 return true;
             }
             return (card.getCardType() == CardType.WILD) || (card.getCardType() == CardType.WILDDRAWFOUR);
-
         } else {
             return (card.getCardColor() == topCard.getCardColor()) || (card.getValue() == topCard.getValue())
             || (card.getCardType() == CardType.WILDDRAWFOUR) || (card.getCardType() == CardType.WILD);
@@ -160,6 +306,7 @@ public class UnoController {
 
 
     public void clientAddToTable(Card card) {
+        // Create animation
         TranslateTransition tt = new TranslateTransition(Duration.millis(700), card.getImage());
         Bounds bounds = cardsOnTable.localToParent(cardsOnTable.getBoundsInLocal());
         Bounds cBounds = card.getImage().localToScene(card.getImage().getBoundsInLocal());
@@ -170,14 +317,19 @@ public class UnoController {
         tt.setToX(bounds.getMinX() - cBounds.getMinX());
         tt.setOnFinished((actionEvent -> {
             cardView.getChildren().remove(card.getImage());
+            // Reset values otherwise it will not position correctly on the table.
             card.getImage().setTranslateX(0);
             card.getImage().setTranslateY(0);
             cardsOnTable.addCard(card);
         }));
+        // Play animation
         tt.play();
-//        if (card.getCardType() != CardType.REVERSE && card.getCardType() != CardType.SKIP) {
-//            setNextPlayerTurn(-1);
-//        }
+
+        // If the size is one and the client has not pressed Uno, we must send a GAME_FORGOTUNO command
+        if((cardView.getCards().size() == 1 && !hasPressedUno) && !(card.getCardType() == CardType.WILD || card.getCardType() == CardType.WILDDRAWFOUR )) {
+            worker.process(new Command(CommandType.GAME_FORGOTUNO));
+        }
+        // Show colorPicker view so the player can select color of the card.
         if (card.getCardType() == CardType.WILD || card.getCardType() == CardType.WILDDRAWFOUR) {
             colorPicker.setCard(card);
             colorPicker.setWorker(worker);
@@ -189,7 +341,30 @@ public class UnoController {
             worker.process(new Command(CommandType.GAME_CLIENTSETCOLOR, String.valueOf(CardColor.NONE)));
             // Send card to server
             worker.process(new Command(CommandType.GAME_CLIENTLAYCARD, card.toString()));
+            // Reset hasPressedUno and unoButton
+            showUnoButton(false);
+            hasPressedUno = false;
         }
+    }
+
+    public void deckAddCardToTable(Card card) {
+        // Set card width/height
+        cardView.setCardProperties(card.getImage());
+        RotateTransition rotateTransition = new RotateTransition(Duration.millis(500), card.getImage());
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(400), card.getImage());
+        ParallelTransition parallelTransition = new ParallelTransition(rotateTransition, translateTransition);
+        Bounds bounds = cardsOnTable.localToParent(cardsOnTable.getBoundsInLocal());
+        Bounds deckBounds = deck.localToParent(deck.getBoundsInLocal());
+        translateTransition.setToY(deckBounds.getMinY());
+        translateTransition.setToX(bounds.getMinX() + 25);
+        rotateTransition.setToAngle(90);
+        rotateTransition.setToAngle(0);
+        parallelTransition.setOnFinished((event) -> {
+            card.getImage().setTranslateY(0);
+            card.getImage().setTranslateX(0);
+            cardsOnTable.addCard(card);
+        });
+        parallelTransition.play();
     }
 
 
@@ -212,13 +387,22 @@ public class UnoController {
             rotateTransition.setToAngle(0);
             parallelTransition.setOnFinished((event) -> {
                 Platform.runLater(() -> mainPane.getChildren().remove(card.getImage()));
-                Platform.runLater(() -> cardsOnTable.addCard(card));
+                cardsOnTable.addCard(card);
+                checkForUno();
             });
             parallelTransition.play();
         }
 
     }
 
+    // Enables the UNO button if the requirements are hit
+    public void checkForUno() {
+        if(isClientsTurn && (cardView.getCards().size() == 2) && clientCanPlay()) {
+            showUnoButton(true);
+        } else {
+            showUnoButton(false);
+        }
+    }
 
     public synchronized void addOpponent(OpponentPlayer player) {
         ImageView backCard = getCardImageViewByName("CARD_BACK");
@@ -278,6 +462,7 @@ public class UnoController {
     }
 
     private void animateCardToHand(Card card, int delay) {
+        cardView.getCards().add(card);
         Bounds deckBounds = deck.localToScene(deck.getBoundsInLocal());
         // Set configured width / height specified by CardView.
         cardView.setCardProperties(card.getImage());
@@ -330,27 +515,37 @@ public class UnoController {
         parallelTransition.play();
     }
 
-    public void adjustComponentWidth(double stageWidth) {
-        if (stageWidth < 1000) {
-            AnchorPane.setLeftAnchor(cardsOnTable, stageWidth / 2 + 20);
-            AnchorPane.setLeftAnchor(colorPicker, stageWidth / 2 + 20);
-            AnchorPane.setLeftAnchor(deck, stageWidth / 4 + 40);
-        } else {
-            AnchorPane.setLeftAnchor(cardsOnTable, stageWidth / 2 + 100);
-            AnchorPane.setLeftAnchor(colorPicker, stageWidth / 2 + 100);
-            AnchorPane.setLeftAnchor(deck, stageWidth / 4 + 100);
+    // Method that adds all nodes that are to be moved according to screen size to
+    // the dynamicPositionComponents list. All nodes in that list will be dynamically positioned according to
+    // the nodes' userData which should be the percentage of the width/height that the node should have.
+    private void addNodesToDynamicPositioning() {
+        dynamicPositionComponents.add(cardsOnTable);
+        dynamicPositionComponents.add(deck);
+        dynamicPositionComponents.add(colorPicker);
+        dynamicPositionComponents.add(unoButton);
+        dynamicPositionComponents.add(lateUnoButton);
+        dynamicPositionComponents.add(messageLabel);
+    }
+
+    private int getNodeYUserData(Node node) {
+        return Integer.parseInt(node.getUserData().toString().split(":")[0]);
+    }
+    private int getNodeXUserData(Node node) {
+        return Integer.parseInt(node.getUserData().toString().split(":")[1]);
+    }
+
+    public void adjustComponentXPosition(double stageWidth) {
+        for(Node node : dynamicPositionComponents) {
+                double anchorPercentage = getNodeXUserData(node) * stageWidth / 100;
+                AnchorPane.setLeftAnchor(node, anchorPercentage);
+
         }
     }
 
-    public void adjustComponentHeight(double stageHeight) {
-        if (stageHeight > 900) {
-            AnchorPane.setTopAnchor(colorPicker, 400d);
-            AnchorPane.setTopAnchor(cardsOnTable, 400d);
-            AnchorPane.setTopAnchor(deck, 400d);
-        } else {
-            AnchorPane.setTopAnchor(deck, 200d);
-            AnchorPane.setTopAnchor(colorPicker, 200d);
-            AnchorPane.setTopAnchor(cardsOnTable, 200d);
+    public void adjustComponentYPosition(double stageHeight) {
+        for(Node node : dynamicPositionComponents) {
+            double anchorPercentage = getNodeYUserData(node) * stageHeight / 100;
+            AnchorPane.setTopAnchor(node, anchorPercentage);
         }
     }
 }

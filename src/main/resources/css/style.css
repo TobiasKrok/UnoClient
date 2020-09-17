@@ -1,10 +1,5 @@
 .root {
-  -fx-background-image: url("../images/background.jpg");
-  -fx-background-size: cover;
-  -fx-background-position: center;
-}
-
-.opponentplayerview {
-  -fx-border-width: 10;
-  -fx-border-color: red;
+    -fx-background-image: url("../images/background.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: center;
 }

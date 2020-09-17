@@ -9,13 +9,15 @@ import com.tobias.game.card.CardColor;
 import com.tobias.game.card.CardType;
 import com.tobias.server.ServerConnection;
 import com.tobias.server.command.Command;
-import com.tobias.server.command.CommandType;
 import javafx.application.Platform;
 import javafx.scene.image.ImageView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,13 +32,16 @@ public class GameCommandHandler extends AbstractCommandHandler {
         this.serverConnection = serverConnection;
     }
 
+
     @Override
     public void process(Command command) {
         switch (command.getType()) {
             case GAME_START:
+                String[] gameParams = command.getData().split(":");
                 this.gameManager = new GameManager();
-                List<OpponentPlayer> opponents = parseOpponentPlayers(command.getData());
+                List<OpponentPlayer> opponents = parseOpponentPlayers(gameParams[0]);
                 gameManager.createNewGame(new ClientPlayer(serverConnection.getId()),opponents);
+                Main.getUnoController().deckAddCardToTable(parseCards(gameParams[1]).get(0));
                 // Add to UnoController view. This creates a new OpponentPlayerView
                 for(OpponentPlayer player : opponents) {
                     Main.getUnoController().addOpponent(player);
@@ -46,6 +51,7 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 break;
             case GAME_SETCARD:
                 List<Card> cards = parseCards(command.getData());
+
                 gameManager.addCardToPlayer(cards);
                 Main.getUnoController().addCardToPlayer(cards);
                 Main.getUnoController().setWaitingForCard(false);
@@ -78,7 +84,7 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 gameManager.disconnectPlayer(Integer.parseInt(command.getData()));
                 break;
             case GAME_CLIENTDRAWCARD:
-                serverConnection.write(new Command(CommandType.GAME_CLIENTDRAWCARD,command.getData()));
+                serverConnection.write(command);
                 break;
             case GAME_OPPONENTDRAWCARD:
                 Map<Integer, Integer> map = parseOpponentPlayerIdCardCount(command.getData());
@@ -86,7 +92,7 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 Platform.runLater(()-> Main.getUnoController().addCardToOpponent(entry.getKey(),entry.getValue()));
                 break;
             case GAME_CLIENTLAYCARD:
-                serverConnection.write(new Command(CommandType.GAME_CLIENTLAYCARD,command.getData()));
+                serverConnection.write(command);
                 break;
             case GAME_OPPONENTLAYCARD:
                 Map<Integer, Card> opponentInfo = parseOpponentPlayerLayCard(command.getData());
@@ -95,12 +101,41 @@ public class GameCommandHandler extends AbstractCommandHandler {
                 Main.getUnoController().opponentAddCardToTable(mapEntry.getKey(),mapEntry.getValue());
                 break;
             case GAME_SKIPTURN:
-                serverConnection.write(new Command(CommandType.GAME_SKIPTURN,String.valueOf(serverConnection.getId())));
+                serverConnection.write(command);
             case GAME_SETCOLOR:
-                Platform.runLater(() -> Main.getUnoController().setNextColor(CardColor.valueOf(command.getData())));
+                if(command.getData().isEmpty() || command.getData().equals("NONE")) {
+                    Platform.runLater(() -> Main.getUnoController().setNextColor(CardColor.NONE));
+                } else {
+                    Platform.runLater(() -> Main.getUnoController().setNextColor(CardColor.valueOf(command.getData())));
+                    Main.getUnoController().addClientNotificationMessage("Next card color has been set to " + command.getData());
+                }
                 break;
             case GAME_CLIENTSETCOLOR:
-                serverConnection.write(new Command(CommandType.GAME_CLIENTSETCOLOR,command.getData()));
+                serverConnection.write(command);
+                break;
+            case GAME_UNO:
+                // If data is empty, it means that the client is the one that sent this command and not the server.
+                if(command.getData().isEmpty()) {
+                    serverConnection.write(command);
+                } else {
+                    String userName = Main.getUnoController().getOpponentPlayerViewById(Integer.parseInt(command.getData())).getUsername();
+                    Main.getUnoController().addClientNotificationMessage(userName + " has pressed UNO!");
+                }
+                break;
+
+            case GAME_FORGOTUNO:
+                if(command.getData().isEmpty() || command.getData().equals("OPPONENT") ) {
+                    serverConnection.write(command);
+                } else {
+                    // If data is not empty or is not equal to OPPONENT, the data contains the ID of the player that forgot
+                    // We must then show the forgotUNo button
+                    String userName = Main.getUnoController().getOpponentPlayerViewById(Integer.parseInt(command.getData())).getUsername();
+                    Main.getUnoController().addClientNotificationMessage(userName + " forgot to press UNO!");
+                    Main.getUnoController().showForgotUnoButton();
+                }
+                break;
+            case GAME_FINISHED:
+                Platform.runLater(() -> Main.getUnoController().showGameWonLabel(Main.getUnoController().getOpponentPlayerViewById(Integer.parseInt(command.getData())).getUsername()));
                 break;
             default:
                 LOGGER.error("Could not process command: " + command.toString());

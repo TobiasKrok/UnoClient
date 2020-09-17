@@ -3,7 +3,6 @@ package com.tobias.server.handlers;
 
 import com.tobias.server.ServerConnection;
 import com.tobias.server.command.Command;
-import com.tobias.server.command.CommandType;
 
 public class ClientCommandHandler extends AbstractCommandHandler {
 

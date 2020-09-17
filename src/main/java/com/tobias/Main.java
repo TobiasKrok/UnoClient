@@ -38,7 +38,7 @@ private static UnoController unoController;
             Parent root = fxmlLoader.load();
             stage.setScene(new Scene(root,1100,600));
             stage.setTitle("Uno ALPHA");
-            root.getStylesheets().addAll(this.getClass().getResource("/css/style.css").toExternalForm());
+            root.getStylesheets().addAll(this.getClass().getClassLoader().getResource("css/style.css").toExternalForm());
             unoController = fxmlLoader.getController();
             unoController.newWorker(serverConnection.getHandlers());
             setStageSizeChangedEvents(stage);
@@ -48,10 +48,10 @@ private static UnoController unoController;
 
     private static void setStageSizeChangedEvents(Stage stage) {
         stage.widthProperty().addListener((obv, oldVal, newVal) -> {
-            unoController.adjustComponentWidth(stage.getWidth());
+            unoController.adjustComponentXPosition(stage.getWidth());
         });
         stage.heightProperty().addListener((obv, oldVal, newVal) -> {
-            unoController.adjustComponentHeight(stage.getHeight());
+            unoController.adjustComponentYPosition(stage.getHeight());
         });
     }
 

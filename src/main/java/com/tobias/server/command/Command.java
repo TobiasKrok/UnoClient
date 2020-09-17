@@ -5,6 +5,9 @@ public class Command {
     private CommandType type;
     private String data;
 
+    public Command(CommandType type) {
+        this(type,"");
+    }
     public Command(CommandType type, String data) {
         this.type = type;
         this.data = data;

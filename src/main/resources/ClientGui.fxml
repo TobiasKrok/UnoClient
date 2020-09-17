@@ -6,16 +6,21 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.Label?>
 <AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tobias.gui.UnoController">
     <children>
         <VBox fx:id="leftOpponents" alignment="CENTER" layoutX="-1.0" prefHeight="319.0" prefWidth="107.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="100.0" />
         <HBox fx:id="topOpponents" alignment="CENTER" layoutX="234.0" prefHeight="100.0" prefWidth="389.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="0.0" />
         <VBox fx:id="rightOpponents" alignment="CENTER" layoutX="793.0" prefHeight="319.0" prefWidth="107.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0" />
-        <ImageView fx:id="deck" fitHeight="120.0" fitWidth="80.0" layoutX="340.0" layoutY="200.0" pickOnBounds="true" rotate="90.0" />
-        <ImageView fx:id="unoButton" fitHeight="67.0" fitWidth="137.0" layoutX="735.0" layoutY="402.0" pickOnBounds="true" preserveRatio="true" />
-        <TableCardView fx:id="cardsOnTable" prefHeight="200" prefWidth="170" layoutX="600.0" layoutY="151.0" />
-        <CardView fx:id="cardView" prefHeight="178.0" prefWidth="446.0" alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" />
-        <CardColorPicker fx:id="colorPicker" prefHeight="164.0" prefWidth="158.0" layoutX="600.0" layoutY="151.0">
+        <ImageView fx:id="deck" fitHeight="120.0" fitWidth="80.0" layoutX="340.0" layoutY="200.0" pickOnBounds="true" rotate="90.0" userData="35:30" />
+        <ImageView fx:id="unoButton" fitHeight="100.0" fitWidth="100.0" layoutX="970.0" layoutY="402.0" pickOnBounds="true" userData="70:85" />
+        <ImageView fx:id="lateUnoButton" fitHeight="100.0" fitWidth="100.0" layoutX="960.0" layoutY="402.0" pickOnBounds="true"  userData="70:85"/>
+        <TableCardView fx:id="cardsOnTable" prefHeight="200" prefWidth="170" layoutX="850.0" layoutY="151.0" userData="30:55" />
+        <CardView fx:id="cardView" prefHeight="178.0" prefWidth="300.0" alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="145.0" AnchorPane.rightAnchor="145.0" />
+        <Label fx:id="messageLabel" textFill="darkturquoise" userData="60:45" style="-fx-font-weight: bold; -fx-font-size: 15px" />
+        <Label fx:id="gameWonLabel" textFill="deeppink" userData="50:45" style="-fx-font-weight: bold;-fx-font-size: 25px"/>
+        <CardColorPicker fx:id="colorPicker" prefHeight="164.0" prefWidth="158.0" layoutX="600.0" layoutY="151.0" userData="35:55">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="157.0" minWidth="10.0" prefWidth="157.0" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="10.0" prefWidth="147.0" />
