@@ -1,9 +1,10 @@
 package com.tobias.gui;
 
 import com.tobias.server.ServerConnection;
-import com.tobias.utils.IpValidator;
+import com.tobias.server.command.Command;
+import com.tobias.server.command.CommandType;
+import com.tobias.utils.IPValidator;
 import javafx.animation.PauseTransition;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -15,12 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 
 public class LobbyController {
@@ -45,6 +41,7 @@ public class LobbyController {
     private static final Logger LOGGER = LogManager.getLogger(LobbyController.class.getName());
 
     public void initialize() {
+
     }
 
     //Validates user input and returns the first error it finds.
@@ -60,10 +57,10 @@ public class LobbyController {
             setErrorMessage("Username cannot be longer than 16 characters");
             return false;
         }
-        else if(!IpValidator.isIpv4(addressField.getText())) {
+        else if(!IPValidator.isIpv4(addressField.getText())) {
             setErrorMessage("IP address is not valid");
             return false;
-        } else if(!IpValidator.isValidPort(portField.getText())) {
+        } else if(!IPValidator.isValidPort(portField.getText())) {
             setErrorMessage("Port number must be between 1 and 65535");
             return false;
         }
@@ -76,7 +73,10 @@ public class LobbyController {
             if(serverConnection == null) {
                 setErrorMessage("Could not connect to server! Please try again later");
             } else {
-                checkForId(serverConnection);
+                if(checkForId(serverConnection)) {
+                    setSuccessLabel("Connected to server");
+                    serverConnection.write(new Command(CommandType.CLIENT_CONNECT,usernameField.getText()));
+                }
             }
         }
     }
@@ -111,14 +111,18 @@ public class LobbyController {
         }
         return serverConnection;
     }
-    private void checkForId(ServerConnection serverConnection) {
+    private boolean checkForId(ServerConnection serverConnection){
         ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-        ses.schedule(() -> {
-            if(!serverConnection.idReceived()){
-                LOGGER.fatal("Server did not accept connection, no ID was received. Disconnecting..");
-                serverConnection.close();
-            }
-        },10, TimeUnit.SECONDS);
-    }
+       ScheduledFuture future  = ses.schedule(serverConnection::idReceived, 10, TimeUnit.SECONDS);
 
+       boolean recieved = false;
+       try {
+           recieved = (Boolean) future.get();
+       } catch (InterruptedException e) {
+           LOGGER.error("ID check was interruptet!", e);
+       } catch (ExecutionException e) {
+           LOGGER.error("Error during SES execution!", e);
+       }
+        return recieved;
+    }
 }

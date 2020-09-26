@@ -54,12 +54,6 @@ import java.util.List;
         this.currentPlayerTurn = player;
     }
 
-    int getDeckCount() {
-        return table.getDeck().getCount();
-    }
-    Card getTopCard() {
-        return table.getTopCard();
-    }
 
     List<Card> getClientPlayerHand() {
         return clientPlayer.getHand();

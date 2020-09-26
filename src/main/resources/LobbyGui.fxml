@@ -16,7 +16,7 @@
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <Button fx:id="connectButton" layoutX="244.0" layoutY="209.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="113.0" text="Connect" />
+                  <Button fx:id="connectButton" layoutX="244.0" layoutY="209.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="113.0" text="Connect" onMouseClicked="#onConnectClick"/>
                   <TextField fx:id="usernameField" layoutX="226.0" layoutY="173.0" promptText="Username" />
                   <TextField fx:id="portField" layoutX="389.0" layoutY="115.0" prefHeight="25.0" prefWidth="64.0" promptText="Port" />
                   <TextField fx:id="addressField" layoutX="226.0" layoutY="115.0" promptText="Address" />

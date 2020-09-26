@@ -18,6 +18,8 @@ public class ClientCommandHandler extends AbstractCommandHandler {
             case CLIENT_REGISTERID:
                 connection.setClientId(Integer.parseInt(command.getData()));
                 break;
+            case CLIENT_CONNECTED:
+                //registers opponents
         }
     }
 }

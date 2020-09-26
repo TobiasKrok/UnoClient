@@ -2,7 +2,7 @@ package com.tobias.utils;
 
 import java.util.Arrays;
 
-public class IpValidator {
+public class IPValidator {
 
     public static boolean isDecimal(String string) {
         // Check whether string has a leading zero but is not "0"
@@ -21,7 +21,7 @@ public class IpValidator {
         String[] parts = ip.split("\\.", -1);
         return parts.length == 4 // 4 parts
                 && Arrays.stream(parts)
-                .filter(IpValidator::isDecimal) // Only decimal numbers
+                .filter(IPValidator::isDecimal) // Only decimal numbers
                 .map(Integer::parseInt)
                 .filter(i -> i <= 255 && i >= 0) // Must be inside [0, 255]
                 .count() == 4; // 4 numerical parts inside [0, 255]
