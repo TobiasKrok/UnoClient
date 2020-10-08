@@ -1,8 +1,10 @@
 package com.tobias;
 
 
+import com.tobias.gui.LobbyController;
 import com.tobias.gui.UnoController;
 import com.tobias.server.ServerConnection;
+import com.tobias.server.handlers.AbstractCommandHandler;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -21,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 public class Main extends Application {
 private static Logger LOGGER = LogManager.getLogger(Main.class.getName());
 private static UnoController unoController;
+private static LobbyController lobbyController;
 
 
     public static void main(String[] args) {
@@ -29,23 +32,30 @@ private static UnoController unoController;
 
     @Override
     public void start(Stage stage) throws Exception {
-       List<String> params = getParameters().getRaw();
-        ServerConnection serverConnection =  startServerConnection(params.get(0), Integer.parseInt(params.get(1)));
-        checkForId(serverConnection);
-        if(serverConnection != null) {
-            FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("/ClientGui.fxml"));
-            Parent root = fxmlLoader.load();
-            stage.setScene(new Scene(root,1100,600));
-            stage.setTitle("Uno ALPHA");
-            root.getStylesheets().addAll(this.getClass().getClassLoader().getResource("css/style.css").toExternalForm());
-            unoController = fxmlLoader.getController();
-            unoController.newWorker(serverConnection.getHandlers());
-            setStageSizeChangedEvents(stage);
-            stage.show();
-        }
+        loadLobbyWindow(stage);
+        stage.show();
     }
 
+    private void loadLobbyWindow(Stage stage) throws Exception{
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        fxmlLoader.setLocation(getClass().getResource("/LobbyGui.fxml"));
+        Parent root = fxmlLoader.load();
+        stage.setScene(new Scene(root,600,400));
+        stage.setTitle("Uno Lobby");
+        lobbyController = fxmlLoader.getController();
+
+    }
+    private void loadGameWindow(Stage stage, Map<String, AbstractCommandHandler> handlers) throws Exception {
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        fxmlLoader.setLocation(getClass().getResource("/ClientGui.fxml"));
+        Parent root = fxmlLoader.load();
+        stage.setScene(new Scene(root,1100,600));
+        stage.setTitle("Uno");
+        root.getStylesheets().addAll(this.getClass().getClassLoader().getResource("css/style.css").toExternalForm());
+        unoController = fxmlLoader.getController();
+        unoController.newWorker(handlers);
+        setStageSizeChangedEvents(stage);
+    }
     private static void setStageSizeChangedEvents(Stage stage) {
         stage.widthProperty().addListener((obv, oldVal, newVal) -> {
             unoController.adjustComponentXPosition(stage.getWidth());
@@ -81,4 +91,6 @@ private static UnoController unoController;
     public static UnoController getUnoController() {
         return unoController;
     }
+    public static LobbyController getLobbyController() {
+        return lobbyController;}
 }

@@ -18,6 +18,8 @@ public class IPValidator {
     }
 
     public static boolean isIpv4(String ip) {
+        if(ip.equals("localhost")) return true;
+
         String[] parts = ip.split("\\.", -1);
         return parts.length == 4 // 4 parts
                 && Arrays.stream(parts)

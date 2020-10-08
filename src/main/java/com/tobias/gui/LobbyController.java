@@ -46,7 +46,15 @@ public class LobbyController {
 
     //Validates user input and returns the first error it finds.
     private boolean validateUserInput() {
-        if(usernameField.getText().isEmpty()) {
+
+        if(!IPValidator.isIpv4(addressField.getText())) {
+            setErrorMessage("IP address is not valid");
+            return false;
+        } else if(!IPValidator.isValidPort(portField.getText())) {
+            setErrorMessage("Port number must be between 1 and 65535");
+            return false;
+        }
+        else if(usernameField.getText().isEmpty()) {
             setErrorMessage("Username field cannot be empty");
             return false;
         } else if(!(usernameField.getText().matches("[A-Za-z0-9_]+"))) {
@@ -55,13 +63,6 @@ public class LobbyController {
         }
         else if (usernameField.getText().length() > 16) {
             setErrorMessage("Username cannot be longer than 16 characters");
-            return false;
-        }
-        else if(!IPValidator.isIpv4(addressField.getText())) {
-            setErrorMessage("IP address is not valid");
-            return false;
-        } else if(!IPValidator.isValidPort(portField.getText())) {
-            setErrorMessage("Port number must be between 1 and 65535");
             return false;
         }
         return true;
@@ -83,6 +84,7 @@ public class LobbyController {
 
     private void setErrorMessage(String error) {
         errorLabel.setText(error);
+        errorLabel.setVisible(true);
         hideLabelAfterSeconds(3,errorLabel);
     }
     private void setSuccessLabel(String successMessage) {
@@ -97,9 +99,12 @@ public class LobbyController {
 
     private ServerConnection connect(String ip, int port) {
         ServerConnection serverConnection = null;
+        ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+
         try {
             connectionStatusLabel.setVisible(true);
             connectionStatusLabel.setText("Connecting..");
+            ses.schedule()
             Socket socket = new Socket(ip,port);
             LOGGER.info("Connected to server:" + socket.getRemoteSocketAddress().toString());
             serverConnection = new ServerConnection(socket);
@@ -113,13 +118,13 @@ public class LobbyController {
     }
     private boolean checkForId(ServerConnection serverConnection){
         ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-       ScheduledFuture future  = ses.schedule(serverConnection::idReceived, 10, TimeUnit.SECONDS);
+        ScheduledFuture future = ses.schedule(serverConnection::idReceived, 10, TimeUnit.SECONDS);
 
        boolean recieved = false;
        try {
            recieved = (Boolean) future.get();
        } catch (InterruptedException e) {
-           LOGGER.error("ID check was interruptet!", e);
+           LOGGER.error("ID check was interrupted!", e);
        } catch (ExecutionException e) {
            LOGGER.error("Error during SES execution!", e);
        }
