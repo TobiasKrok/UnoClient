@@ -18,6 +18,7 @@ public class IPValidator {
     }
 
     public static boolean isIpv4(String ip) {
+        // while localhost is not an ipv4 address, we want the program to accept it when hosting local games
         if(ip.equals("localhost")) return true;
 
         String[] parts = ip.split("\\.", -1);

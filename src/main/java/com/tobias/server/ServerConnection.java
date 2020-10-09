@@ -3,7 +3,7 @@ package com.tobias.server;
 
 import com.tobias.server.command.Command;
 import com.tobias.server.command.CommandWorker;
-import com.tobias.server.handlers.AbstractCommandHandler;
+import com.tobias.server.handlers.CommandHandler;
 import com.tobias.server.handlers.ClientCommandHandler;
 import com.tobias.server.handlers.GameCommandHandler;
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +21,7 @@ public class ServerConnection implements Runnable {
     private Socket socket;
     private CommandWorker worker;
     private Thread workerThread;
-    private Map<String, AbstractCommandHandler> handlers;
+    private Map<String, CommandHandler> handlers;
     private boolean idReceived = false;
     private int clientId;
     private static final Logger LOGGER = LogManager.getLogger(ServerConnection.class.getName());
@@ -127,7 +127,7 @@ public class ServerConnection implements Runnable {
         return null;
     }
 
-    public Map<String, AbstractCommandHandler> getHandlers() {
+    public Map<String, CommandHandler> getHandlers() {
         return handlers;
     }
 }

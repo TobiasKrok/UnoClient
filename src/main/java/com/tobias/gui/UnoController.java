@@ -11,7 +11,7 @@ import com.tobias.gui.components.TableCardView;
 import com.tobias.server.command.Command;
 import com.tobias.server.command.CommandType;
 import com.tobias.server.command.CommandWorker;
-import com.tobias.server.handlers.AbstractCommandHandler;
+import com.tobias.server.handlers.CommandHandler;
 import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
@@ -40,7 +40,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
-public class UnoController {
+public class UnoController extends AbstractController{
     @FXML
     private CardView cardView;
     @FXML
@@ -425,12 +425,12 @@ public class UnoController {
         opponentPlayerViews.put(player.getId(), view);
     }
 
-    public void newWorker(Map<String, AbstractCommandHandler> handlers) {
+  /*  public void newWorker(Map<String, CommandHandler> handlers) {
         worker = new CommandWorker(handlers);
         Thread t = new Thread(worker);
         t.setName("UnoController-" + t.getId());
         t.start();
-    }
+    }*/
 
     public ImageView getCardImageViewByName(String name) {
         if (cardImages.get(name) == null) {

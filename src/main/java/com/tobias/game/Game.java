@@ -3,6 +3,7 @@ package com.tobias.game;
 import com.tobias.game.card.Card;
 import com.tobias.game.card.Table;
 
+import java.util.ArrayList;
 import java.util.List;
 
  class Game {
@@ -12,12 +13,14 @@ import java.util.List;
     private boolean inProgress;
     private List<OpponentPlayer> opponentPlayers;
     private Player currentPlayerTurn;
+    private List<Player> players;
 
 
     Game(ClientPlayer p, List<OpponentPlayer> opponentPlayers) {
         this.clientPlayer = p;
         this.opponentPlayers = opponentPlayers;
         this.table = new Table();
+        this.players = new ArrayList<>();
     }
 
     boolean isInProgress() {

@@ -4,7 +4,7 @@ package com.tobias.server.handlers;
 import com.tobias.server.ServerConnection;
 import com.tobias.server.command.Command;
 
-public class ClientCommandHandler extends AbstractCommandHandler {
+public class ClientCommandHandler implements CommandHandler {
 
     private ServerConnection connection;
 
@@ -20,6 +20,10 @@ public class ClientCommandHandler extends AbstractCommandHandler {
                 break;
             case CLIENT_CONNECTED:
                 //registers opponents
+                break;
+            case CLIENT_CONNECT:
+                connection.write(command);
+                break;
         }
     }
 }

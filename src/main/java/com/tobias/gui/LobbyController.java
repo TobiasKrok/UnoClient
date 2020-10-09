@@ -1,10 +1,13 @@
 package com.tobias.gui;
 
+import com.tobias.Main;
 import com.tobias.server.ServerConnection;
 import com.tobias.server.command.Command;
 import com.tobias.server.command.CommandType;
+import com.tobias.server.command.CommandWorker;
 import com.tobias.utils.IPValidator;
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -17,9 +20,10 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
-public class LobbyController {
+public class LobbyController extends AbstractController {
 
     @FXML
     private TabPane tabPane;
@@ -38,6 +42,9 @@ public class LobbyController {
     @FXML
     private Label connectionStatusLabel;
 
+    private CommandWorker worker; //todo initialize
+    private AtomicBoolean connected = new AtomicBoolean();
+    private ScheduledExecutorService ses =  Executors.newScheduledThreadPool(3);
     private static final Logger LOGGER = LogManager.getLogger(LobbyController.class.getName());
 
     public void initialize() {
@@ -47,21 +54,19 @@ public class LobbyController {
     //Validates user input and returns the first error it finds.
     private boolean validateUserInput() {
 
-        if(!IPValidator.isIpv4(addressField.getText())) {
+        if (!IPValidator.isIpv4(addressField.getText())) {
             setErrorMessage("IP address is not valid");
             return false;
-        } else if(!IPValidator.isValidPort(portField.getText())) {
+        } else if (!IPValidator.isValidPort(portField.getText())) {
             setErrorMessage("Port number must be between 1 and 65535");
             return false;
-        }
-        else if(usernameField.getText().isEmpty()) {
+        } else if (usernameField.getText().isEmpty()) {
             setErrorMessage("Username field cannot be empty");
             return false;
-        } else if(!(usernameField.getText().matches("[A-Za-z0-9_]+"))) {
+        } else if (!(usernameField.getText().matches("[A-Za-z0-9_]+"))) {
             setErrorMessage("Username cannot contain spaces or special characters");
             return false;
-        }
-        else if (usernameField.getText().length() > 16) {
+        } else if (usernameField.getText().length() > 16) {
             setErrorMessage("Username cannot be longer than 16 characters");
             return false;
         }
@@ -69,65 +74,77 @@ public class LobbyController {
     }
 
     public void onConnectClick() {
-        if(validateUserInput()) {
-            ServerConnection serverConnection = connect(addressField.getText(), Integer.parseInt(portField.getText()));
-            if(serverConnection == null) {
-                setErrorMessage("Could not connect to server! Please try again later");
-            } else {
-                if(checkForId(serverConnection)) {
+        if (validateUserInput()) {
+            connect(addressField.getText(), Integer.parseInt(portField.getText()));
+            ses.schedule(() -> {
+                if (connected.get()) {
                     setSuccessLabel("Connected to server");
-                    serverConnection.write(new Command(CommandType.CLIENT_CONNECT,usernameField.getText()));
+                    worker.process(new Command(CommandType.CLIENT_CONNECT, usernameField.getText()));
+                } else {
+                    // if (checkForId(serverConnection)) {
+                    setErrorMessage("Could not connect to server! Please try again later");
+                    //   }
                 }
-            }
+            }, 6, TimeUnit.SECONDS);
+
         }
     }
 
     private void setErrorMessage(String error) {
-        errorLabel.setText(error);
+        Platform.runLater(() -> errorLabel.setText(error));
         errorLabel.setVisible(true);
-        hideLabelAfterSeconds(3,errorLabel);
+        hideLabelAfterSeconds(3, errorLabel);
     }
+
     private void setSuccessLabel(String successMessage) {
-        successLabel.setText(successMessage);
+        Platform.runLater(() -> successLabel.setText(successMessage));
+        successLabel.setVisible(true);
         hideLabelAfterSeconds(4, successLabel);
     }
+
     private void hideLabelAfterSeconds(int seconds, Label label) {
         PauseTransition visiblePause = new PauseTransition(Duration.seconds(seconds));
         visiblePause.setOnFinished(event -> label.setVisible(false));
         visiblePause.play();
     }
 
-    private ServerConnection connect(String ip, int port) {
-        ServerConnection serverConnection = null;
-        ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+    private void connect(String ip, int port) {
+        connectionStatusLabel.setVisible(true);
+        connectionStatusLabel.setText("Connecting..");
+        ses.schedule(() -> {
+            try {
+                Socket socket = new Socket(ip, port);
+                LOGGER.info("Connected to server:" + socket.getRemoteSocketAddress().toString());
+                connectionStatusLabel.setVisible(false);
+                connected.set(true);
+                ServerConnection serverConnection = new ServerConnection(socket);
+                new Thread(serverConnection).start();
+                // Initialize workers once the server connection has been made
+                newWorker(serverConnection.getHandlers());
+                Main.getUnoController().newWorker(serverConnection.getHandlers());
+            } catch (IOException e) {
+                LOGGER.fatal("Failed to connect to server!", e);
+                connectionStatusLabel.setVisible(false);
+                connected.set(false);
+            }
+        }, 0, TimeUnit.SECONDS);
 
-        try {
-            connectionStatusLabel.setVisible(true);
-            connectionStatusLabel.setText("Connecting..");
-            ses.schedule()
-            Socket socket = new Socket(ip,port);
-            LOGGER.info("Connected to server:" + socket.getRemoteSocketAddress().toString());
-            serverConnection = new ServerConnection(socket);
-            new Thread(serverConnection).start();
-
-        } catch (IOException e) {
-            LOGGER.fatal("Failed to connect to server!",e);
-            connectionStatusLabel.setVisible(false);
-        }
-        return serverConnection;
     }
-    private boolean checkForId(ServerConnection serverConnection){
-        ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+
+    private boolean checkForId(ServerConnection serverConnection) {
         ScheduledFuture future = ses.schedule(serverConnection::idReceived, 10, TimeUnit.SECONDS);
 
-       boolean recieved = false;
-       try {
-           recieved = (Boolean) future.get();
-       } catch (InterruptedException e) {
-           LOGGER.error("ID check was interrupted!", e);
-       } catch (ExecutionException e) {
-           LOGGER.error("Error during SES execution!", e);
-       }
+        boolean recieved = false;
+        try {
+            recieved = (Boolean) future.get();
+        } catch (InterruptedException e) {
+            LOGGER.error("ID check was interrupted!", e);
+        } catch (ExecutionException e) {
+            LOGGER.error("Error during SES execution!", e);
+        }
+        ses.shutdown();
         return recieved;
     }
+
+
 }

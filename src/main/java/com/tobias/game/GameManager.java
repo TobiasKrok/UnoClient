@@ -3,6 +3,7 @@ package com.tobias.game;
 import com.tobias.game.card.Card;
 import com.tobias.game.card.Table;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,10 +11,19 @@ public class GameManager {
 
     private Game game;
     private Table table;
+    private List<Player> players;
+
+    public GameManager() {
+        this.players = new ArrayList<>();
+    }
 
     public void createNewGame(ClientPlayer clientPlayer, List<OpponentPlayer> opponentPlayers) {
         this.game = new Game(clientPlayer, opponentPlayers);
         this.table = game.getTable();
+    }
+
+    public void addPlayer(Player p) {
+        players.add(p);
     }
 
     public Game getGame() {

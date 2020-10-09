@@ -1,7 +1,7 @@
 package com.tobias.server.command;
 
 
-import com.tobias.server.handlers.AbstractCommandHandler;
+import com.tobias.server.handlers.CommandHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -11,11 +11,11 @@ import java.util.Map;
 public class CommandWorker implements Runnable{
 
 
-    private Map<String, AbstractCommandHandler> handlers;
+    private Map<String, CommandHandler> handlers;
     private final LinkedList<Command> queue;
     private static final Logger LOGGER = LogManager.getLogger(CommandWorker.class.getName());
 
-    public CommandWorker(Map<String, AbstractCommandHandler> handlers ){
+    public CommandWorker(Map<String, CommandHandler> handlers ){
         this.queue = new LinkedList<>();
         this.handlers = handlers;
     }
@@ -65,7 +65,7 @@ public class CommandWorker implements Runnable{
         return new Command(cmdType,data);
     }
 
-    private AbstractCommandHandler getHandlerForCommand(Command command){
+    private CommandHandler getHandlerForCommand(Command command){
         String prefix = command.getType().name().substring(0,command.getType().name().indexOf("_"));
         return handlers.get(prefix);
     }

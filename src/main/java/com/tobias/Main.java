@@ -4,7 +4,7 @@ package com.tobias;
 import com.tobias.gui.LobbyController;
 import com.tobias.gui.UnoController;
 import com.tobias.server.ServerConnection;
-import com.tobias.server.handlers.AbstractCommandHandler;
+import com.tobias.server.handlers.CommandHandler;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -45,7 +45,7 @@ private static LobbyController lobbyController;
         lobbyController = fxmlLoader.getController();
 
     }
-    private void loadGameWindow(Stage stage, Map<String, AbstractCommandHandler> handlers) throws Exception {
+    private void loadGameWindow(Stage stage, Map<String, CommandHandler> handlers) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(getClass().getResource("/ClientGui.fxml"));
         Parent root = fxmlLoader.load();

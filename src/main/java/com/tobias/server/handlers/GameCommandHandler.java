@@ -22,7 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class GameCommandHandler extends AbstractCommandHandler {
+public class GameCommandHandler implements CommandHandler {
 
     private GameManager gameManager;
     private ServerConnection serverConnection;
@@ -83,16 +83,16 @@ public class GameCommandHandler extends AbstractCommandHandler {
             case GAME_PLAYERDISCONNECT:
                 gameManager.disconnectPlayer(Integer.parseInt(command.getData()));
                 break;
+                // all of the below commands just directly send the command to the server without any processing. here we just merge them because they all do the same.
             case GAME_CLIENTDRAWCARD:
+            case GAME_CLIENTLAYCARD:
+            case GAME_CLIENTSETCOLOR:
                 serverConnection.write(command);
                 break;
             case GAME_OPPONENTDRAWCARD:
                 Map<Integer, Integer> map = parseOpponentPlayerIdCardCount(command.getData());
                 Map.Entry<Integer, Integer> entry = map.entrySet().iterator().next();
                 Platform.runLater(()-> Main.getUnoController().addCardToOpponent(entry.getKey(),entry.getValue()));
-                break;
-            case GAME_CLIENTLAYCARD:
-                serverConnection.write(command);
                 break;
             case GAME_OPPONENTLAYCARD:
                 Map<Integer, Card> opponentInfo = parseOpponentPlayerLayCard(command.getData());
@@ -109,9 +109,6 @@ public class GameCommandHandler extends AbstractCommandHandler {
                     Platform.runLater(() -> Main.getUnoController().setNextColor(CardColor.valueOf(command.getData())));
                     Main.getUnoController().addClientNotificationMessage("Next card color has been set to " + command.getData());
                 }
-                break;
-            case GAME_CLIENTSETCOLOR:
-                serverConnection.write(command);
                 break;
             case GAME_UNO:
                 // If data is empty, it means that the client is the one that sent this command and not the server.
