@@ -1,18 +1,15 @@
 package com.tobias.gui;
 
 import com.tobias.Main;
+import com.tobias.game.Player;
 import com.tobias.server.ServerConnection;
 import com.tobias.server.command.Command;
 import com.tobias.server.command.CommandType;
-import com.tobias.server.command.CommandWorker;
 import com.tobias.utils.IPValidator;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,8 +38,9 @@ public class LobbyController extends AbstractController {
     private Label successLabel;
     @FXML
     private Label connectionStatusLabel;
+    @FXML
+    private TableView playerListView;
 
-    private CommandWorker worker; //todo initialize
     private AtomicBoolean connected = new AtomicBoolean();
     private ScheduledExecutorService ses =  Executors.newScheduledThreadPool(3);
     private static final Logger LOGGER = LogManager.getLogger(LobbyController.class.getName());
@@ -54,19 +52,19 @@ public class LobbyController extends AbstractController {
     //Validates user input and returns the first error it finds.
     private boolean validateUserInput() {
 
-        if (!IPValidator.isIpv4(addressField.getText())) {
+        if (!IPValidator.isIpv4(addressField.getText().trim())) {
             setErrorMessage("IP address is not valid");
             return false;
-        } else if (!IPValidator.isValidPort(portField.getText())) {
+        } else if (!IPValidator.isValidPort(portField.getText().trim())) {
             setErrorMessage("Port number must be between 1 and 65535");
             return false;
         } else if (usernameField.getText().isEmpty()) {
             setErrorMessage("Username field cannot be empty");
             return false;
-        } else if (!(usernameField.getText().matches("[A-Za-z0-9_]+"))) {
+        } else if (!(usernameField.getText().trim().matches("[A-Za-z0-9_]+"))) {
             setErrorMessage("Username cannot contain spaces or special characters");
             return false;
-        } else if (usernameField.getText().length() > 16) {
+        } else if (usernameField.getText().trim().length() > 16) {
             setErrorMessage("Username cannot be longer than 16 characters");
             return false;
         }
@@ -74,8 +72,8 @@ public class LobbyController extends AbstractController {
     }
 
     public void onConnectClick() {
-        if (validateUserInput()) {
-            connect(addressField.getText(), Integer.parseInt(portField.getText()));
+        if (validateUserInput() && !connected.get()) {
+            connect(addressField.getText().trim(), Integer.parseInt(portField.getText().trim()));
             ses.schedule(() -> {
                 if (connected.get()) {
                     setSuccessLabel("Connected to server");
@@ -85,6 +83,7 @@ public class LobbyController extends AbstractController {
                     setErrorMessage("Could not connect to server! Please try again later");
                     //   }
                 }
+                connectionStatusLabel.setVisible(false);
             }, 6, TimeUnit.SECONDS);
 
         }
@@ -115,7 +114,6 @@ public class LobbyController extends AbstractController {
             try {
                 Socket socket = new Socket(ip, port);
                 LOGGER.info("Connected to server:" + socket.getRemoteSocketAddress().toString());
-                connectionStatusLabel.setVisible(false);
                 connected.set(true);
                 ServerConnection serverConnection = new ServerConnection(socket);
                 new Thread(serverConnection).start();
@@ -124,11 +122,14 @@ public class LobbyController extends AbstractController {
                 Main.getUnoController().newWorker(serverConnection.getHandlers());
             } catch (IOException e) {
                 LOGGER.fatal("Failed to connect to server!", e);
-                connectionStatusLabel.setVisible(false);
                 connected.set(false);
             }
         }, 0, TimeUnit.SECONDS);
 
+    }
+
+    public void addPlayerToView(Player p) {
+        playerListView.getItems().add(p.getUsername());
     }
 
     private boolean checkForId(ServerConnection serverConnection) {

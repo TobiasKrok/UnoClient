@@ -20,6 +20,7 @@ public class ClientCommandHandler implements CommandHandler {
                 break;
             case CLIENT_CONNECTED:
                 //registers opponents
+
                 break;
             case CLIENT_CONNECT:
                 connection.write(command);

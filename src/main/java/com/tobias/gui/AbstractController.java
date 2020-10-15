@@ -7,7 +7,7 @@ import java.util.Map;
 
 public abstract class AbstractController {
 
-    private CommandWorker worker;
+     CommandWorker worker;
 
     public void newWorker(Map<String, CommandHandler> handlers) {
         worker = new CommandWorker(handlers);

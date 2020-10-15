@@ -10,8 +10,6 @@ import com.tobias.gui.components.OpponentPlayerView;
 import com.tobias.gui.components.TableCardView;
 import com.tobias.server.command.Command;
 import com.tobias.server.command.CommandType;
-import com.tobias.server.command.CommandWorker;
-import com.tobias.server.handlers.CommandHandler;
 import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
@@ -70,7 +68,6 @@ public class UnoController extends AbstractController{
     private List<Node> dynamicPositionComponents;
     private Map<String, Image> cardImages;
     private Map<Integer, OpponentPlayerView> opponentPlayerViews;
-    private CommandWorker worker;
     // Used to indicate if we are waiting to receive a card from server
     private boolean waitingForCard;
     // Used to indicate if client has 1 card left

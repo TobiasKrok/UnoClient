@@ -32,7 +32,8 @@ private static LobbyController lobbyController;
 
     @Override
     public void start(Stage stage) throws Exception {
-        loadLobbyWindow(stage);
+        //loadLobbyWindow(stage);
+        loadGameWindow();
         stage.show();
     }
 
