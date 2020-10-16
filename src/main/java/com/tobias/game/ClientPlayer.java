@@ -8,8 +8,8 @@ import java.util.List;
 public class ClientPlayer extends Player {
     private List<Card> hand;
 
-    public ClientPlayer(int id) {
-        super(id);
+    public ClientPlayer(int id, String username) {
+        super(id,username);
         this.hand = new ArrayList<>();
     }
 

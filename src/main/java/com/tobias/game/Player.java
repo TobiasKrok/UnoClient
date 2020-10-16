@@ -10,7 +10,7 @@ public class Player {
         this.id = id;
     }
 
-    Player(int id, String username){
+    public Player(int id, String username){
         this(id);
         this.username = username;
     }

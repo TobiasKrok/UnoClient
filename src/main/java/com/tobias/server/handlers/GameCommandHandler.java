@@ -40,7 +40,7 @@ public class GameCommandHandler implements CommandHandler {
                 String[] gameParams = command.getData().split(":");
                 this.gameManager = new GameManager();
                 List<OpponentPlayer> opponents = parseOpponentPlayers(gameParams[0]);
-                gameManager.createNewGame(new ClientPlayer(serverConnection.getId()),opponents);
+               // gameManager.createNewGame(new ClientPlayer(serverConnection.getId()),opponents);
                 Main.getUnoController().deckAddCardToTable(parseCards(gameParams[1]).get(0));
                 // Add to UnoController view. This creates a new OpponentPlayerView
                 for(OpponentPlayer player : opponents) {
