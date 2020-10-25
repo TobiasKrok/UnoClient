@@ -16,6 +16,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -40,11 +42,14 @@ public class LobbyController extends AbstractController {
     private Label connectionStatusLabel;
     @FXML
     private TableView playerListView;
-
+    private List<Player> connectedPlayers;
     private AtomicBoolean connected = new AtomicBoolean();
     private ScheduledExecutorService ses =  Executors.newScheduledThreadPool(3);
     private static final Logger LOGGER = LogManager.getLogger(LobbyController.class.getName());
 
+    public LobbyController() {
+        connectedPlayers = new ArrayList<>();
+    }
     public void initialize() {
 
     }
@@ -128,7 +133,12 @@ public class LobbyController extends AbstractController {
 
     }
 
-    public void addPlayerToView(Player p) {
+    public List<Player> getConnectedPlayers() {
+
+    }
+
+        public void addPlayerToView(Player p) {
+        connectedPlayers.add(p);
         playerListView.getItems().add(p.getUsername());
     }
 

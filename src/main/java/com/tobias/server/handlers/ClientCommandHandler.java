@@ -44,7 +44,13 @@ public class ClientCommandHandler implements CommandHandler {
                 LOGGER.info("A client has connected! ID:" + Integer.parseInt(playerInfo[0]) + " Username:" + playerInfo[1]);
                 break;
             case CLIENT_CONNECTEDPLAYERS:
+                for(Map.Entry <Integer, String> entry : parseConnectedPlayerCommand(command.getData()).entrySet()) {
+                   for(Player p : Main.getLobbyController().getConnectedPlayers()) {
+                       if(!(p instanceof ClientPlayer) &&  ) {
 
+                       }
+                   }
+                }
                 break;
             case CLIENT_CONNECT:
                 connection.write(command);

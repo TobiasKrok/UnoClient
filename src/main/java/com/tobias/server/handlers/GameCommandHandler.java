@@ -1,7 +1,6 @@
 package com.tobias.server.handlers;
 
 import com.tobias.Main;
-import com.tobias.game.ClientPlayer;
 import com.tobias.game.GameManager;
 import com.tobias.game.OpponentPlayer;
 import com.tobias.game.card.Card;
@@ -95,6 +94,7 @@ public class GameCommandHandler implements CommandHandler {
                 Platform.runLater(()-> Main.getUnoController().addCardToOpponent(entry.getKey(),entry.getValue()));
                 break;
             case GAME_OPPONENTLAYCARD:
+                //todo pretty sure its possible to get the values without creating an iterator.
                 Map<Integer, Card> opponentInfo = parseOpponentPlayerLayCard(command.getData());
                 // Get first value in map. Size should only be 1.
                 Map.Entry<Integer,Card> mapEntry = opponentInfo.entrySet().iterator().next();
