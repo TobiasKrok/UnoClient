@@ -5,6 +5,7 @@ public class Player {
 
     private int id;
     private String username;
+    private boolean ready;
 
     Player(int id) {
         this.id = id;
@@ -25,5 +26,17 @@ public class Player {
 
     public int getId() {
         return id;
+    }
+
+    public void setReady(boolean ready) {
+        this.ready = ready;
+    }
+
+    public boolean isReady() {
+        return ready;
+    }
+    // used by tableview fxml propertyfactory
+    public String getStatusInText() {
+        return ready ? "Ready" : "Not ready";
     }
 }

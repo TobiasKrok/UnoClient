@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -41,7 +42,7 @@ public class LobbyController extends AbstractController {
     @FXML
     private Label connectionStatusLabel;
     @FXML
-    private TableView playerListView;
+    private TableView<Player> playerListView;
     private List<Player> connectedPlayers;
     private AtomicBoolean connected = new AtomicBoolean();
     private ScheduledExecutorService ses =  Executors.newScheduledThreadPool(3);
@@ -134,20 +135,20 @@ public class LobbyController extends AbstractController {
     }
 
     public List<Player> getConnectedPlayers() {
-
+        return connectedPlayers;
     }
 
         public void addPlayerToView(Player p) {
         connectedPlayers.add(p);
-        playerListView.getItems().add(p.getUsername());
+        playerListView.getItems().add(p);
     }
 
     private boolean checkForId(ServerConnection serverConnection) {
-        ScheduledFuture future = ses.schedule(serverConnection::idReceived, 10, TimeUnit.SECONDS);
+        ScheduledFuture<Boolean> future = ses.schedule(serverConnection::idReceived, 10, TimeUnit.SECONDS);
 
         boolean recieved = false;
         try {
-            recieved = (Boolean) future.get();
+            recieved = future.get();
         } catch (InterruptedException e) {
             LOGGER.error("ID check was interrupted!", e);
         } catch (ExecutionException e) {

@@ -82,12 +82,6 @@ public class GameCommandHandler implements CommandHandler {
             case GAME_PLAYERDISCONNECT:
                 gameManager.disconnectPlayer(Integer.parseInt(command.getData()));
                 break;
-                // all of the below commands just directly send the command to the server without any processing. here we just merge them because they all do the same.
-            case GAME_CLIENTDRAWCARD:
-            case GAME_CLIENTLAYCARD:
-            case GAME_CLIENTSETCOLOR:
-                serverConnection.write(command);
-                break;
             case GAME_OPPONENTDRAWCARD:
                 Map<Integer, Integer> map = parseOpponentPlayerIdCardCount(command.getData());
                 Map.Entry<Integer, Integer> entry = map.entrySet().iterator().next();
@@ -139,6 +133,12 @@ public class GameCommandHandler implements CommandHandler {
                  username=Main.getUnoController().getOpponentPlayerViewById(Integer.parseInt(command.getData())).getUsername();
                 }
                 Platform.runLater(() -> Main.getUnoController().showGameWonLabel(username));
+                break;
+            // all of the below commands just directly send the command to the server without any processing. here we just merge them because they all do the same.
+            case GAME_CLIENTDRAWCARD:
+            case GAME_CLIENTLAYCARD:
+            case GAME_CLIENTSETCOLOR:
+                serverConnection.write(command);
                 break;
             default:
                 LOGGER.error("Could not process command: " + command.toString());

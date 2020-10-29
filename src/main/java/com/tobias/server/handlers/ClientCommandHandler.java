@@ -44,12 +44,16 @@ public class ClientCommandHandler implements CommandHandler {
                 LOGGER.info("A client has connected! ID:" + Integer.parseInt(playerInfo[0]) + " Username:" + playerInfo[1]);
                 break;
             case CLIENT_CONNECTEDPLAYERS:
+                System.out.println(Main.getLobbyController().getConnectedPlayers().size());
                 for(Map.Entry <Integer, String> entry : parseConnectedPlayerCommand(command.getData()).entrySet()) {
-                   for(Player p : Main.getLobbyController().getConnectedPlayers()) {
-                       if(!(p instanceof ClientPlayer) &&  ) {
+                    for (Player p : Main.getLobbyController().getConnectedPlayers()) {
+                          if(entry.getKey() != p.getId()) {
+                              System.out.println("lol ");
+                            } else {
+                              System.out.println("HAHAAA");
+                          }
 
-                       }
-                   }
+                    }
                 }
                 break;
             case CLIENT_CONNECT:
@@ -64,7 +68,7 @@ public class ClientCommandHandler implements CommandHandler {
         Matcher m = p.matcher(data);
         String[] props;
         while (m.find()) {
-            props = m.group(1).split(",");
+            props = m.group(1).split(":");
             // Index 0 is the ID, 1 is the username.
             players.put(Integer.parseInt(props[0]),props[1]);
         }
