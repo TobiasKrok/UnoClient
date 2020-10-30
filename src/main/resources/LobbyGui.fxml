@@ -7,18 +7,18 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import javafx.scene.control.cell.MapValueFactory?>
 <TabPane fx:id="tabPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tobias.gui.LobbyController">
   <tabs>
     <Tab text="Connect">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <Button fx:id="connectButton" layoutX="244.0" layoutY="209.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="113.0" text="Connect" onMouseClicked="#onConnectClick"/>
+                  <Button fx:id="connectButton" layoutX="244.0" layoutY="209.0" mnemonicParsing="false" onMouseClicked="#onConnectClick" prefHeight="25.0" prefWidth="113.0" text="Connect" />
                   <TextField fx:id="usernameField" layoutX="226.0" layoutY="173.0" promptText="Username" />
                   <TextField fx:id="portField" layoutX="389.0" layoutY="115.0" prefHeight="25.0" prefWidth="64.0" promptText="Port" />
                   <TextField fx:id="addressField" layoutX="226.0" layoutY="115.0" promptText="Address" />
@@ -30,43 +30,46 @@
                         <Font name="System Bold" size="19.0" />
                      </font>
                   </Label>
-                  <Label fx:id="errorLabel" layoutX="220.0" layoutY="271.0" prefHeight="17.0" prefWidth="350.0" text="Label" visible="false" textFill="crimson">
+                  <Label fx:id="errorLabel" layoutX="220.0" layoutY="271.0" prefHeight="17.0" prefWidth="350.0" text="Label" textFill="crimson" visible="false">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                   <Label fx:id="successLabel" layoutX="244.0" layoutY="296.0" prefHeight="34.0" prefWidth="350.0" text="Label" visible="false" textFill="green">
+                   <Label fx:id="successLabel" layoutX="244.0" layoutY="296.0" prefHeight="34.0" prefWidth="350.0" text="Label" textFill="green" visible="false">
                        <font>
                            <Font name="System Bold" size="12.0" />
                        </font>
                    </Label>
-                   <Label fx:id="connectionStatusLabel" layoutX="391.0" layoutY="177.0" prefHeight="19.0" prefWidth="80.0" text="Label" visible="false"/>
+                   <Label fx:id="connectionStatusLabel" layoutX="391.0" layoutY="177.0" prefHeight="19.0" prefWidth="80.0" text="Label" visible="false" />
                </children></AnchorPane>
       </content>
     </Tab>
-    <Tab text="Game Info" >
+    <Tab text="Game Info">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <TableView layoutX="198.0" layoutY="44.0" prefHeight="326.0" prefWidth="205.0" fx:id="playerListView">
+                  <TableView fx:id="playerListView" layoutY="36.0" prefHeight="337.0" prefWidth="205.0">
                     <columns>
-                      <TableColumn prefWidth="105.0" text="Username" >
+                      <TableColumn prefWidth="105.0" text="Username">
                               <cellValueFactory>
-                                  <PropertyValueFactory property="username"/>
+                                  <PropertyValueFactory property="username" />
                               </cellValueFactory>
                       </TableColumn>
                       <TableColumn prefWidth="100.0" text="Status">
                           <cellValueFactory>
-                              <PropertyValueFactory property="statusInText"/>
+                              <PropertyValueFactory property="statusInText" />
                           </cellValueFactory>
                       </TableColumn>
                     </columns>
                   </TableView>
-                  <Label layoutX="248.0" layoutY="6.0" prefHeight="30.0" prefWidth="106.0" text="Uno Lobby">
+                  <Label layoutX="247.0" layoutY="14.0" prefHeight="30.0" prefWidth="106.0" text="Uno Lobby">
                      <font>
                         <Font name="System Bold" size="19.0" />
                      </font>
                   </Label>
+                  <Label layoutX="210.0" layoutY="64.0" prefHeight="26.0" prefWidth="258.0" text="The game will start when all players are ready" />
+                  <ToggleButton fx:id="readyToggleButton" layoutX="275.0" layoutY="287.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="84.0" text="Ready" onMouseClicked="#onReadyClick" />
+                  <Label layoutX="205.0" layoutY="324.0" prefHeight="17.0" prefWidth="268.0" text="Press the button to ready up. Press again to undo" />
                </children></AnchorPane>
       </content>
     </Tab>

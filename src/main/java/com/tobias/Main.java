@@ -37,6 +37,7 @@ private static LobbyController lobbyController;
         stage.show();
     }
 
+    public static void
     private void loadLobbyWindow(Stage stage) throws Exception{
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(getClass().getResource("/LobbyGui.fxml"));

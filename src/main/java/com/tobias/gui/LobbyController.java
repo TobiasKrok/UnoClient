@@ -1,6 +1,7 @@
 package com.tobias.gui;
 
 import com.tobias.Main;
+import com.tobias.game.ClientPlayer;
 import com.tobias.game.Player;
 import com.tobias.server.ServerConnection;
 import com.tobias.server.command.Command;
@@ -34,7 +35,7 @@ public class LobbyController extends AbstractController {
     @FXML
     private TextField addressField;
     @FXML
-    private Button connectButton;
+    private ToggleButton readyToggleButton;
     @FXML
     private Label errorLabel;
     @FXML
@@ -45,14 +46,16 @@ public class LobbyController extends AbstractController {
     private TableView<Player> playerListView;
     private List<Player> connectedPlayers;
     private AtomicBoolean connected = new AtomicBoolean();
-    private ScheduledExecutorService ses =  Executors.newScheduledThreadPool(3);
+    private ScheduledExecutorService ses = Executors.newScheduledThreadPool(3);
     private static final Logger LOGGER = LogManager.getLogger(LobbyController.class.getName());
 
     public LobbyController() {
         connectedPlayers = new ArrayList<>();
     }
-    public void initialize() {
 
+    public void initialize() {
+        // Disable when started
+        readyToggleButton.setDisable(true);
     }
 
     //Validates user input and returns the first error it finds.
@@ -84,6 +87,7 @@ public class LobbyController extends AbstractController {
                 if (connected.get()) {
                     setSuccessLabel("Connected to server");
                     worker.process(new Command(CommandType.CLIENT_CONNECT, usernameField.getText()));
+                    readyToggleButton.setDisable(false);
                 } else {
                     // if (checkForId(serverConnection)) {
                     setErrorMessage("Could not connect to server! Please try again later");
@@ -93,6 +97,25 @@ public class LobbyController extends AbstractController {
             }, 6, TimeUnit.SECONDS);
 
         }
+    }
+
+    public void onReadyClick() {
+        boolean ready = readyToggleButton.isSelected();
+        if (ready) {
+            worker.process(new Command(CommandType.CLIENT_READY));
+        } else {
+            worker.process(new Command(CommandType.CLIENT_NOTREADY));
+        }
+        // There can only be one ClientPlayer
+        connectedPlayers.stream()
+                .filter(p -> p instanceof ClientPlayer)
+                .forEach(c -> setPlayerStatus(c, ready));
+    }
+
+    public void setPlayerStatus(Player player, boolean ready) {
+        player.setReady(ready);
+        playerListView.getItems().clear();
+        playerListView.getItems().setAll(connectedPlayers);
     }
 
     private void setErrorMessage(String error) {
@@ -138,7 +161,7 @@ public class LobbyController extends AbstractController {
         return connectedPlayers;
     }
 
-        public void addPlayerToView(Player p) {
+    public void addPlayerToView(Player p) {
         connectedPlayers.add(p);
         playerListView.getItems().add(p);
     }

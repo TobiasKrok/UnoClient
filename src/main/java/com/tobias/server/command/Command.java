@@ -8,11 +8,13 @@ public class Command {
     public Command(CommandType type) {
         this(type,"");
     }
+    public Command(CommandType type, int id) {
+        this(type,String.valueOf(id));
+    }
     public Command(CommandType type, String data) {
         this.type = type;
         this.data = data;
     }
-
 
     public String getData(){
         return this.data;
