@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -56,6 +55,8 @@ public class LobbyController extends AbstractController {
     public void initialize() {
         // Disable when started
         readyToggleButton.setDisable(true);
+
+        //todo lobby disconnect
     }
 
     //Validates user input and returns the first error it finds.

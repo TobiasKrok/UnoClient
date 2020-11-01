@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 public class GameCommandHandler implements CommandHandler {
@@ -36,17 +37,16 @@ public class GameCommandHandler implements CommandHandler {
     public void process(Command command) {
         switch (command.getType()) {
             case GAME_START:
-                String[] gameParams = command.getData().split(":");
                 this.gameManager = new GameManager();
-                List<OpponentPlayer> opponents = parseOpponentPlayers(gameParams[0]);
-               // gameManager.createNewGame(new ClientPlayer(serverConnection.getId()),opponents);
-                Main.getUnoController().deckAddCardToTable(parseCards(gameParams[1]).get(0));
-                // Add to UnoController view. This creates a new OpponentPlayerView
-                for(OpponentPlayer player : opponents) {
-                    Main.getUnoController().addOpponent(player);
-                    //TODO find another fix to wait for first opponentplayerview initialization.
-                    try {Thread.sleep(100);} catch (InterruptedException e){}
-                }
+                Main.getUnoController().deckAddCardToTable(parseCards(command.getData()).get(0));
+                // Filter only OpponentPlayers objects and then add them as opponentplayers in the uno view
+                List<OpponentPlayer> players = Main.getLobbyController().getConnectedPlayers().stream()
+                        .filter(o -> o instanceof OpponentPlayer)
+                        .map(o -> (OpponentPlayer) o)
+                        .collect(Collectors.toList());
+                Main.getUnoController().addOpponents(players);
+                //Send a command letting the server know that the Uno window has been set up and
+                // the player is ready to receive cards
                 break;
             case GAME_SETCARD:
                 List<Card> cards = parseCards(command.getData());

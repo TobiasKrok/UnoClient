@@ -399,35 +399,31 @@ public class UnoController extends AbstractController{
         }
     }
 
-    public synchronized void addOpponent(OpponentPlayer player) {
-        ImageView backCard = getCardImageViewByName("CARD_BACK");
-        backCard.setFitWidth(80);
-        backCard.setFitHeight(120);
-        OpponentPlayerView view = new OpponentPlayerView(backCard, player.getUsername());
-        HBox.setMargin(view, new Insets(0, 30, 0, 0));
-        if (topOpponents.getChildren().size() == 3) {
-            if (leftOpponents.getChildren().size() < 3) {
-                view.setRotate(270);
-                view.getCard().setRotate(180);
-                view.rotateLabels(90);
-                Platform.runLater(() -> leftOpponents.getChildren().add(view));
-            } else if (rightOpponents.getChildren().size() < 3) {
-                view.rotateLabels(270);
-                view.setRotate(90);
-                Platform.runLater(() -> rightOpponents.getChildren().add(view));
+    public void addOpponents(List<OpponentPlayer> players) {
+        for(OpponentPlayer player : players) {
+            ImageView backCard = getCardImageViewByName("CARD_BACK");
+            backCard.setFitWidth(80);
+            backCard.setFitHeight(120);
+            OpponentPlayerView view = new OpponentPlayerView(backCard, player.getUsername());
+            HBox.setMargin(view, new Insets(0, 30, 0, 0));
+            if (topOpponents.getChildren().size() == 3) {
+                if (leftOpponents.getChildren().size() < 3) {
+                    view.setRotate(270);
+                    view.getCard().setRotate(180);
+                    view.rotateLabels(90);
+                    Platform.runLater(() -> leftOpponents.getChildren().add(view));
+                } else if (rightOpponents.getChildren().size() < 3) {
+                    view.rotateLabels(270);
+                    view.setRotate(90);
+                    Platform.runLater(() -> rightOpponents.getChildren().add(view));
+                }
+            } else {
+                Platform.runLater(() -> topOpponents.getChildren().add(view));
             }
-        } else {
-            Platform.runLater(() -> topOpponents.getChildren().add(view));
+            opponentPlayerViews.put(player.getId(), view);
         }
-        opponentPlayerViews.put(player.getId(), view);
     }
 
-  /*  public void newWorker(Map<String, CommandHandler> handlers) {
-        worker = new CommandWorker(handlers);
-        Thread t = new Thread(worker);
-        t.setName("UnoController-" + t.getId());
-        t.start();
-    }*/
 
     public ImageView getCardImageViewByName(String name) {
         if (cardImages.get(name) == null) {
