@@ -37,6 +37,12 @@ public class GameCommandHandler implements CommandHandler {
     public void process(Command command) {
         switch (command.getType()) {
             case GAME_START:
+                try {
+                    Main.loadGameWindow();
+                } catch (Exception e) {
+                    //todo better catch
+                    e.printStackTrace();
+                }
                 this.gameManager = new GameManager();
                 Main.getUnoController().deckAddCardToTable(parseCards(command.getData()).get(0));
                 // Filter only OpponentPlayers objects and then add them as opponentplayers in the uno view
@@ -47,6 +53,7 @@ public class GameCommandHandler implements CommandHandler {
                 Main.getUnoController().addOpponents(players);
                 //Send a command letting the server know that the Uno window has been set up and
                 // the player is ready to receive cards
+
                 break;
             case GAME_SETCARD:
                 List<Card> cards = parseCards(command.getData());

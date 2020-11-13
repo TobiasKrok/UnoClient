@@ -29,10 +29,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -87,13 +84,6 @@ public class UnoController extends AbstractController{
 
 
     public void initialize() {
-
-        File imageDir = new File(getClass().getResource("/images/cards").getFile());
-        for (File f : imageDir.listFiles()) {
-            String cardName = f.getName().substring(0, f.getName().indexOf("."));
-            Image cardImage = new Image(f.toURI().toString(), 200, 250, false, false);
-            cardImages.put(cardName, cardImage);
-        }
         deck.setImage(getCardImageViewByName("CARD_BACK").getImage());
         unoButton.setImage(getCardImageViewByName("UNO_BUTTON").getImage());
         lateUnoButton.setImage(getCardImageViewByName("UNO_LATEBUTTON").getImage());
@@ -143,6 +133,10 @@ public class UnoController extends AbstractController{
 //        }
 //    }
 
+
+    public void setCardImages(Map<String,Image> images) {
+        this.cardImages = images;
+    }
 
     private void  setUnoButtonsEvents() {
         unoButton.setOnMouseEntered((event) -> {

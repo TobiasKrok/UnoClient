@@ -9,12 +9,15 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,39 +27,41 @@ public class Main extends Application {
 private static Logger LOGGER = LogManager.getLogger(Main.class.getName());
 private static UnoController unoController;
 private static LobbyController lobbyController;
+private static Stage guiStage;
 
 
     public static void main(String[] args) {
+
         launch(args);
     }
 
     @Override
     public void start(Stage stage) throws Exception {
-        loadLobbyWindow(stage);
-      //  loadGameWindow();
+        guiStage = stage;
+       // loadLobbyWindow();
+        loadGameWindow();
         stage.show();
     }
 
-    public static void
-    private void loadLobbyWindow(Stage stage) throws Exception{
+    public static void loadLobbyWindow() throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("/LobbyGui.fxml"));
+        fxmlLoader.setLocation(Main.class.getResource("/LobbyGui.fxml"));
         Parent root = fxmlLoader.load();
-        stage.setScene(new Scene(root,600,400));
-        stage.setTitle("Uno Lobby");
+        guiStage.setScene(new Scene(root,600,400));
+        guiStage.setTitle("Uno Lobby");
         lobbyController = fxmlLoader.getController();
 
     }
-    private void loadGameWindow(Stage stage, Map<String, CommandHandler> handlers) throws Exception {
+    public static void loadGameWindow() throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("/ClientGui.fxml"));
+        fxmlLoader.setLocation(Main.class.getResource("/ClientGui.fxml"));
         Parent root = fxmlLoader.load();
-        stage.setScene(new Scene(root,1100,600));
-        stage.setTitle("Uno");
-        root.getStylesheets().addAll(this.getClass().getClassLoader().getResource("css/style.css").toExternalForm());
+        guiStage.setScene(new Scene(root,1100,600));
+        guiStage.setTitle("Uno");
+        root.getStylesheets().addAll(Main.class.getClassLoader().getResource("css/style.css").toExternalForm());
         unoController = fxmlLoader.getController();
-        unoController.newWorker(handlers);
-        setStageSizeChangedEvents(stage);
+        unoController.setCardImages(loadCardImages());
+        setStageSizeChangedEvents(guiStage);
     }
     private static void setStageSizeChangedEvents(Stage stage) {
         stage.widthProperty().addListener((obv, oldVal, newVal) -> {
@@ -93,6 +98,21 @@ private static LobbyController lobbyController;
     public static UnoController getUnoController() {
         return unoController;
     }
-    public static LobbyController getLobbyController() {
-        return lobbyController;}
+    public static LobbyController getLobbyController() { return lobbyController;}
+
+    private static Map<String, Image> loadCardImages() {
+        Map<String, Image> cardImages = new HashMap<>();
+        File imageDir = new File(Main.class.getResource("/images/cards").getFile());
+        File[] files = imageDir.listFiles();
+        if(files != null) {
+            for (File f : files) {
+                System.out.println("ol");
+                String cardName = f.getName().substring(0, f.getName().indexOf("."));
+                Image cardImage = new Image(f.toURI().toString(), 200, 250, false, false);
+                cardImages.put(cardName, cardImage);
+            }
+        }
+
+        return cardImages;
+    }
 }
