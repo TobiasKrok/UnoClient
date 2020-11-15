@@ -17,6 +17,7 @@ public enum CommandType {
     GAME_SETCOLOR,
     GAME_CLIENTSETCOLOR,
     GAME_FINISHED,
+    GAME_INITIALIZED,
 
 
     CLIENT_CONNECT,

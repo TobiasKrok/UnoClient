@@ -4,8 +4,8 @@ package com.tobias;
 import com.tobias.gui.LobbyController;
 import com.tobias.gui.UnoController;
 import com.tobias.server.ServerConnection;
-import com.tobias.server.handlers.CommandHandler;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -38,8 +38,7 @@ private static Stage guiStage;
     @Override
     public void start(Stage stage) throws Exception {
         guiStage = stage;
-       // loadLobbyWindow();
-        loadGameWindow();
+        loadLobbyWindow();
         stage.show();
     }
 
@@ -56,11 +55,12 @@ private static Stage guiStage;
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(Main.class.getResource("/ClientGui.fxml"));
         Parent root = fxmlLoader.load();
-        guiStage.setScene(new Scene(root,1100,600));
-        guiStage.setTitle("Uno");
+        Platform.runLater(() -> guiStage.setScene(new Scene(root,1100,600)));
+        Platform.runLater(() -> guiStage.setTitle("Uno"));
         root.getStylesheets().addAll(Main.class.getClassLoader().getResource("css/style.css").toExternalForm());
         unoController = fxmlLoader.getController();
         unoController.setCardImages(loadCardImages());
+        unoController.newWorker(lobbyController.getCommandHandlers());
         setStageSizeChangedEvents(guiStage);
     }
     private static void setStageSizeChangedEvents(Stage stage) {
@@ -106,7 +106,6 @@ private static Stage guiStage;
         File[] files = imageDir.listFiles();
         if(files != null) {
             for (File f : files) {
-                System.out.println("ol");
                 String cardName = f.getName().substring(0, f.getName().indexOf("."));
                 Image cardImage = new Image(f.toURI().toString(), 200, 250, false, false);
                 cardImages.put(cardName, cardImage);

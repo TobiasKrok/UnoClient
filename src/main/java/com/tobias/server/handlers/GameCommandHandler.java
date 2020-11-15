@@ -1,6 +1,7 @@
 package com.tobias.server.handlers;
 
 import com.tobias.Main;
+import com.tobias.game.ClientPlayer;
 import com.tobias.game.GameManager;
 import com.tobias.game.OpponentPlayer;
 import com.tobias.game.card.Card;
@@ -39,6 +40,9 @@ public class GameCommandHandler implements CommandHandler {
             case GAME_START:
                 try {
                     Main.loadGameWindow();
+                    //Thread.sleep(200);
+                    // Notify server that the GUI has been initialized
+               //     serverConnection.write(new Command(CommandType.GAME_INITIALIZED));
                 } catch (Exception e) {
                     //todo better catch
                     e.printStackTrace();
@@ -53,7 +57,12 @@ public class GameCommandHandler implements CommandHandler {
                 Main.getUnoController().addOpponents(players);
                 //Send a command letting the server know that the Uno window has been set up and
                 // the player is ready to receive cards
-
+                ClientPlayer clientPlayer = Main.getLobbyController().getConnectedPlayers().stream()
+                        .filter(o -> o instanceof ClientPlayer)
+                        .map(o -> (ClientPlayer) o)
+                        .findFirst()
+                        .get();
+                gameManager.createNewGame(clientPlayer ,players);
                 break;
             case GAME_SETCARD:
                 List<Card> cards = parseCards(command.getData());
@@ -83,7 +92,7 @@ public class GameCommandHandler implements CommandHandler {
                 break;
                 //todo remove
             case GAME_SETDECKCOUNT:
-                gameManager.setDeckCount(Integer.parseInt(command.getData()));
+                //  gameManager.setDeckCount(Integer.parseInt(command.getData()));
           //      Main.getUnoController().setDeckCount(Integer.parseInt(command.getData()));
                 break;
             case GAME_PLAYERDISCONNECT:

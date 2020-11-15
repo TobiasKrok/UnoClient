@@ -1,11 +1,11 @@
 package com.tobias.gui;
 
-import com.tobias.Main;
 import com.tobias.game.ClientPlayer;
 import com.tobias.game.Player;
 import com.tobias.server.ServerConnection;
 import com.tobias.server.command.Command;
 import com.tobias.server.command.CommandType;
+import com.tobias.server.handlers.CommandHandler;
 import com.tobias.utils.IPValidator;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -47,6 +48,7 @@ public class LobbyController extends AbstractController {
     private AtomicBoolean connected = new AtomicBoolean();
     private ScheduledExecutorService ses = Executors.newScheduledThreadPool(3);
     private static final Logger LOGGER = LogManager.getLogger(LobbyController.class.getName());
+    private ServerConnection serverConnection;
 
     public LobbyController() {
         connectedPlayers = new ArrayList<>();
@@ -145,11 +147,10 @@ public class LobbyController extends AbstractController {
                 Socket socket = new Socket(ip, port);
                 LOGGER.info("Connected to server:" + socket.getRemoteSocketAddress().toString());
                 connected.set(true);
-                ServerConnection serverConnection = new ServerConnection(socket);
+                serverConnection = new ServerConnection(socket);
                 new Thread(serverConnection).start();
                 // Initialize workers once the server connection has been made
                 newWorker(serverConnection.getHandlers());
-                Main.getUnoController().newWorker(serverConnection.getHandlers());
             } catch (IOException e) {
                 LOGGER.fatal("Failed to connect to server!", e);
                 connected.set(false);
@@ -160,6 +161,9 @@ public class LobbyController extends AbstractController {
 
     public List<Player> getConnectedPlayers() {
         return connectedPlayers;
+    }
+    public Map<String, CommandHandler> getCommandHandlers() {
+        return serverConnection.getHandlers();
     }
 
     public void addPlayerToView(Player p) {

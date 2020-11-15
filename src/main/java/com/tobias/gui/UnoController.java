@@ -28,8 +28,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -84,9 +86,6 @@ public class UnoController extends AbstractController{
 
 
     public void initialize() {
-        deck.setImage(getCardImageViewByName("CARD_BACK").getImage());
-        unoButton.setImage(getCardImageViewByName("UNO_BUTTON").getImage());
-        lateUnoButton.setImage(getCardImageViewByName("UNO_LATEBUTTON").getImage());
         unoButton.setVisible(false);
         lateUnoButton.setVisible(false);
         cardView.setCanSelect(false);
@@ -136,6 +135,11 @@ public class UnoController extends AbstractController{
 
     public void setCardImages(Map<String,Image> images) {
         this.cardImages = images;
+        // This function is called afte the controller is initialized, so we cant set the images
+        // in the intitialize method. We set them here instead.
+        deck.setImage(getCardImageViewByName("CARD_BACK").getImage());
+        unoButton.setImage(getCardImageViewByName("UNO_BUTTON").getImage());
+        lateUnoButton.setImage(getCardImageViewByName("UNO_LATEBUTTON").getImage());
     }
 
     private void  setUnoButtonsEvents() {
